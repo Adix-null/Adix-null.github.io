@@ -4,3 +4,30 @@
 	--blue: rgb(34, 91, 183);
 	--cyan: hwb(180 10% 10%);
 }
+
+#map {
+	margin: 3px;
+	width: 50%;
+	min-height: 500px;
+	height: auto;
+}
+
+#main {
+	margin-top: 20px;
+	width: 75%;
+	display: flex;
+}
+
+#options {
+	width: 30%;
+}
+.option-title {
+	margin: 0px;
+	font-size: 2em;
+}
+.option-dropdown {
+	font-size: 2em;
+}
+option {
+	font-size: inherit;
+}

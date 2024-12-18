@@ -5,11 +5,76 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
 		<title>Adix Null</title>
-		<link rel="stylesheet" href="style.css" />
+		<link
+			rel="stylesheet"
+			href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+		/>
+		<link rel="stylesheet" href="../style.css" />
+		<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+		<script src="https://unpkg.com/esri-leaflet@3.0.5/dist/esri-leaflet.js"></script>
 	</head>
 	<body>
 		<h1>Vilnius data viz</h1>
 		<a href="../index.html">Home</a>
+
+		<div id="main">
+			<div id="options">
+				<div class="option">
+					<h2 class="option-title">Block</h2>
+					<select id="region-select" class="option-dropdown">
+						<option value="region1">Rajonas 1</option>
+						<option value="region2">Rajonas 2</option>
+					</select>
+				</div>
+				<hr />
+				<div class="option">
+					<h2 class="option-title">Street</h2>
+					<select id="street-select" class="option-dropdown">
+						<option value="region1">Prospektas</option>
+						<option value="region2">Novgorodo</option>
+					</select>
+				</div>
+			</div>
+			<div id="map"></div>
+		</div>
+
+		<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+		<script>
+			const map = L.map("map").setView([54.68714, 25.279572], 10);
+
+			L.tileLayer(
+				"https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+				{
+					attribution:
+						'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>',
+				}
+			).addTo(map);
+
+			const featureLayer = L.esri
+				.featureLayer({
+					url: "https://zemelapiai.vplanas.lt/arcgis/rest/services/Open_Data/Vilniaus_miesto_ribos/MapServer/0",
+					style: {
+						color: "#ff7800", // Contour color
+						weight: 2, // Line thickness
+						fill: false, // No fill
+					},
+				})
+				.addTo(map);
+
+			// Log feature load status
+			featureLayer.on("load", () => {
+				console.log("Features loaded!");
+			});
+
+			document
+				.getElementById("region-select")
+				.addEventListener("change", function () {
+					// Update map based on selection
+					const region = this.value;
+					console.log("Selected:", region);
+				});
+		</script>
+
 		<script src="index.js"></script>
 	</body>
 </html>
