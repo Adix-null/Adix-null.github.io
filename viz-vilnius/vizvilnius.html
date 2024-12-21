@@ -20,18 +20,20 @@
 		<div id="main">
 			<div id="options">
 				<div class="option">
-					<h2 class="option-title">Block</h2>
-					<select id="region-select" class="option-dropdown">
-						<option value="region1">Rajonas 1</option>
-						<option value="region2">Rajonas 2</option>
+					<h2 class="option-title">Transport Type</h2>
+					<select id="transport-type-select" class="option-dropdown">
+						<option value="T">Troleibusai</option>
+						<option value="A">Autobusai</option>
+						<option value="G">G Autobusai</option>
+						<option value="N">Naktiniai</option>
 					</select>
 				</div>
 				<hr />
 				<div class="option">
-					<h2 class="option-title">Street</h2>
-					<select id="street-select" class="option-dropdown">
-						<option value="region1">Prospektas</option>
-						<option value="region2">Novgorodo</option>
+					<h2 class="option-title">Route</h2>
+					<select id="route-select" class="option-dropdown">
+						<option value="73">73</option>
+						<option value="9">9</option>
 					</select>
 				</div>
 			</div>
@@ -39,42 +41,6 @@
 		</div>
 
 		<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
-		<script>
-			const map = L.map("map").setView([54.68714, 25.279572], 10);
-
-			L.tileLayer(
-				"https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
-				{
-					attribution:
-						'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>',
-				}
-			).addTo(map);
-
-			const featureLayer = L.esri
-				.featureLayer({
-					url: "https://zemelapiai.vplanas.lt/arcgis/rest/services/Open_Data/Vilniaus_miesto_ribos/MapServer/0",
-					style: {
-						color: "#ff7800", // Contour color
-						weight: 2, // Line thickness
-						fill: false, // No fill
-					},
-				})
-				.addTo(map);
-
-			// Log feature load status
-			featureLayer.on("load", () => {
-				console.log("Features loaded!");
-			});
-
-			document
-				.getElementById("region-select")
-				.addEventListener("change", function () {
-					// Update map based on selection
-					const region = this.value;
-					console.log("Selected:", region);
-				});
-		</script>
-
-		<script src="index.js"></script>
+		<script src="transport.js"></script>
 	</body>
 </html>
