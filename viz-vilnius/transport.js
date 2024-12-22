@@ -89,7 +89,7 @@ function fetchAndUpdateData() {
                     fillColor: markerColor,
                     fillOpacity: 1,
                 });
-                markersNew.push({ marker: marker, busID: MasinosNumeris });
+                markersNew.push({ marker: marker, busID: MasinosNumeris, route: Marsrutas, direction: KryptiesPavadinimas });
 
                 let fallbackKryptiesPavadinimas = KryptiesPavadinimas
                 encodings.forEach(entry => {
@@ -98,8 +98,9 @@ function fetchAndUpdateData() {
 
                 dictionary = [
                     ["name", Marsrutas],
-                    ["info", MasinosNumeris],
-                    ["info2", fallbackKryptiesPavadinimas]
+                    ["speed", Greitis],
+                    ["dir", fallbackKryptiesPavadinimas],
+                    ["id", MasinosNumeris]
                 ]
                 createPopup(marker, dictionary);
             });
@@ -110,8 +111,10 @@ function fetchAndUpdateData() {
                 markersNew.forEach(marker => {
                     markerGroup.addLayer(marker.marker);
                 });
-
+                updateRouteOptions();
+                updateDirectionOptions();
             }
+
         })
         .catch(err => console.error("Error fetching data:", err));
 }
@@ -162,12 +165,79 @@ function moveMarkerSmoothly(marker, targetLatLng, duration) {
     requestAnimationFrame(animate);
 }
 
+function updateRouteOptions() {
+    const select = document.getElementById("route-select");
+
+    select.innerHTML = "";
+    const newOptions = Array.from(
+        new Map(markersNew.map(item => [item.route, item.route])).values()
+    );
+    console.log(newOptions);
+
+    newOptions.sort((a, b) => {
+        const aHasLetters = /\D$/.test(a); // Check if `a` ends with a letter
+        const bHasLetters = /\D$/.test(b); // Check if `b` ends with a letter
+
+        if (aHasLetters && !bHasLetters) return 1; // Move `a` to the back
+        if (!aHasLetters && bHasLetters) return -1; // Move `b` to the back
+
+        // If both have or don't have letters, compare normally
+        return a.localeCompare(b, undefined, { numeric: true });
+    });
+    newOptions.unshift("Visi");
+    newOptions.forEach(optionData => {
+        const option = document.createElement("option");
+        option.value = optionData;
+        option.textContent = optionData;
+        select.appendChild(option);
+    });
+}
+
+function updateDirectionOptions() {
+    const select = document.getElementById("direction-select");
+
+    select.innerHTML = "";
+    const newOptions = Array.from(
+        new Map(markersNew.map(item => [item.direction, item.direction])).values()
+    );
+
+    newOptions.sort();
+    newOptions.unshift("Visi");
+    newOptions.forEach(optionData => {
+        const option = document.createElement("option");
+        option.value = optionData;
+        option.textContent = optionData;
+        select.appendChild(option);
+    });
+}
+
 //Fetch data every 5 seconds
 fetchAndUpdateData();
 setInterval(fetchAndUpdateData, 5000);
 
 document
-    .getElementById("transport-type-select")
+    .getElementById("transport-select")
+    .addEventListener("change", function () {
+        const selectedColor = this.value;
+        console.log("Selected:", selectedColor);
+
+        markersNew.forEach(marker => {
+            marker.marker.options.fillOpacity = 0;
+            if (selectedColor == "Visi")
+                marker.marker.options.fillOpacity = 1;
+
+            else if (marker.marker.options.fillColor == Colors[selectedColor])
+                marker.marker.options.fillOpacity = 1;
+        });
+    });
+document
+    .getElementById("route-select")
+    .addEventListener("change", function () {
+        const region = this.value;
+        console.log("Selected:", region);
+    });
+document
+    .getElementById("direction-select")
     .addEventListener("change", function () {
         const region = this.value;
         console.log("Selected:", region);

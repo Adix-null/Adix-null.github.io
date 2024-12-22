@@ -22,12 +22,14 @@
 	width: 30%;
 	margin: 20px;
 }
+
 .option-title {
 	margin: 0px;
 	font-size: 2em;
 }
 .option-dropdown {
 	font-size: 2em;
+	max-width: 100%;
 }
 option {
 	font-size: inherit;
