@@ -15,6 +15,14 @@ markerPairs = [];
 firstPairs = [];
 const markerGroup = L.layerGroup().addTo(map);
 
+const defAll = "Visi";
+
+selection = [
+    ["transport-select", "Visi"],
+    ["route-select", "Visi"],
+    ["direction-select", "Visi"]
+];
+
 //Lithuanian characters are encoded in some weird Windows-1257 format, so this is a fallback if conversion fails
 const encodings = [
     ["ą", "ؤ…"],
@@ -45,17 +53,14 @@ const Colors = Object.freeze({
     BLACK: "#303030"
 });
 
+
 function fetchAndUpdateData() {
     fetch('https://www.stops.lt/vilnius/gps_full.txt')
         .then(response => response.text())
         .then(data => {
             markerPairs = createMarkerPairs(firstPairs, markersNew);
-
             markerPairs.forEach(pair => {
-                //if (pair.old.marker.getLatLng().lat !== pair.new.marker.getLatLng().lat || pair.old.marker.getLatLng().lng !== pair.new.marker.getLatLng().lng) {
                 moveMarkerSmoothly(pair.old, pair.new.marker.getLatLng(), 1500);
-                //console.log(pair);
-                //}
             });
             markersOld = markersNew;
             markersNew = [];
@@ -71,6 +76,15 @@ function fetchAndUpdateData() {
                 const result_lat = parseFloat(Platuma.slice(0, 2) + '.' + Platuma.slice(2));
                 const result_lon = parseFloat(Ilguma.slice(0, 2) + '.' + Ilguma.slice(2));
                 const coords = [result_lat, result_lon];
+
+                let fallbackKryptiesPavadinimas = KryptiesPavadinimas
+                encodings.forEach(entry => {
+                    fallbackKryptiesPavadinimas = fallbackKryptiesPavadinimas.replaceAll(entry[1], entry[0]);
+                });
+
+                const vars = ["Transportas", "Marsrutas", "ReisoID", "MasinosNumeris", "Ilguma", "Platuma", "Greitis", "Azimutas", "ReisoPradziaMinutemis", "NuokrypisSekundemis", "MatavimoLaikas", "MasinosTipas", "KryptiesTipas", "KryptiesPavadinimas", "ReisoIdGTFS"];
+                const values = [Transportas, Marsrutas, ReisoID, MasinosNumeris, Ilguma, Platuma, Greitis, Azimutas, ReisoPradziaMinutemis, NuokrypisSekundemis, MatavimoLaikas, MasinosTipas, KryptiesTipas, fallbackKryptiesPavadinimas, ReisoIdGTFS];
+                busData = Object.fromEntries(vars.map((key, index) => [key, values[index]]));
 
                 //choose color
                 markerColor = "#ffffff";
@@ -89,14 +103,9 @@ function fetchAndUpdateData() {
                     fillColor: markerColor,
                     fillOpacity: 1,
                 });
-                markersNew.push({ marker: marker, busID: MasinosNumeris, route: Marsrutas, direction: KryptiesPavadinimas });
+                markersNew.push({ marker: marker, busData: busData, visible: true });
 
-                let fallbackKryptiesPavadinimas = KryptiesPavadinimas
-                encodings.forEach(entry => {
-                    fallbackKryptiesPavadinimas = fallbackKryptiesPavadinimas.replaceAll(entry[1], entry[0]);
-                });
-
-                dictionary = [
+                const dictionary = [
                     ["name", Marsrutas],
                     ["speed", Greitis],
                     ["dir", fallbackKryptiesPavadinimas],
@@ -114,7 +123,6 @@ function fetchAndUpdateData() {
                 updateRouteOptions();
                 updateDirectionOptions();
             }
-
         })
         .catch(err => console.error("Error fetching data:", err));
 }
@@ -136,7 +144,7 @@ function createMarkerPairs(markersOld, markersNew) {
 
     markersNew.forEach(newMarker => {
         let matchingOldMarker = null;
-        matchingOldMarker = markersOld.find(oldMarker => oldMarker.busID === newMarker.busID);
+        matchingOldMarker = markersOld.find(oldMarker => oldMarker.busData.MasinosNumeris === newMarker.busData.MasinosNumeris);
         matchingOldMarker ||= newMarker;
         pairs.push({ old: matchingOldMarker, new: newMarker });
     });
@@ -170,9 +178,8 @@ function updateRouteOptions() {
 
     select.innerHTML = "";
     const newOptions = Array.from(
-        new Map(markersNew.map(item => [item.route, item.route])).values()
+        new Map(markersNew.map(item => [item.busData.Marsrutas, item.busData.Marsrutas])).values()
     );
-    console.log(newOptions);
 
     newOptions.sort((a, b) => {
         const aHasLetters = /\D$/.test(a); // Check if `a` ends with a letter
@@ -198,7 +205,7 @@ function updateDirectionOptions() {
 
     select.innerHTML = "";
     const newOptions = Array.from(
-        new Map(markersNew.map(item => [item.direction, item.direction])).values()
+        new Map(markersNew.map(item => [item.busData.KryptiesPavadinimas, item.busData.KryptiesPavadinimas])).values()
     );
 
     newOptions.sort();
@@ -211,35 +218,51 @@ function updateDirectionOptions() {
     });
 }
 
+function updateMarkers(markersNew) {
+    markerGroup.clearLayers();
+
+    markersNew.forEach(markerData => {
+        if (markerData.visible == true) {
+            const mLatLng = markerData.marker.getLatLng();
+            const marker = L.circleMarker([mLatLng.lat, mLatLng.lng], {
+                radius: 4,
+                color: markerData.marker.options.fillColor,
+                fillColor: markerData.marker.options.fillColor,
+                fillOpacity: 1
+            });
+            markerGroup.addLayer(marker);
+
+            const dictionary = [
+                ["name", markerData.busData.Marsrutas],
+                ["speed", markerData.busData.Greitis],
+                ["dir", markerData.busData.KryptiesPavadinimas],
+                ["id", markerData.busData.MasinosNumeris]
+            ]
+            createPopup(marker, dictionary);
+        }
+    });
+}
+
+function updateSelection(markersNew) {
+    markersNew.forEach(marker => {
+        selectionConditionColor = selection[0][1] === defAll ? true : (marker.marker.options.fillColor === Colors[selection[0][1]]);
+        selectionConditionRoute = selection[1][1] === defAll ? true : (marker.busData.Marsrutas === selection[1][1]);
+        selectionConditionDirection = selection[2][1] === defAll ? true : (marker.busData.KryptiesPavadinimas === selection[2][1]);
+
+        marker.visible = (selectionConditionColor && selectionConditionRoute && selectionConditionDirection) ? true : false;
+    });
+    updateMarkers(markersNew);
+}
+
+//Add event listeners for filtering
+selection.forEach(sel => {
+    document.getElementById(sel[0])
+        .addEventListener("change", function () {
+            sel[1] = this.value;
+            updateSelection(markersNew);
+        });
+});
+
 //Fetch data every 5 seconds
 fetchAndUpdateData();
 setInterval(fetchAndUpdateData, 5000);
-
-document
-    .getElementById("transport-select")
-    .addEventListener("change", function () {
-        const selectedColor = this.value;
-        console.log("Selected:", selectedColor);
-
-        markersNew.forEach(marker => {
-            marker.marker.options.fillOpacity = 0;
-            if (selectedColor == "Visi")
-                marker.marker.options.fillOpacity = 1;
-
-            else if (marker.marker.options.fillColor == Colors[selectedColor])
-                marker.marker.options.fillOpacity = 1;
-        });
-    });
-document
-    .getElementById("route-select")
-    .addEventListener("change", function () {
-        const region = this.value;
-        console.log("Selected:", region);
-    });
-document
-    .getElementById("direction-select")
-    .addEventListener("change", function () {
-        const region = this.value;
-        console.log("Selected:", region);
-    });
-
