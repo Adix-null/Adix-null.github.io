@@ -58,17 +58,10 @@ function fetchAndUpdateData() {
     fetch('https://www.stops.lt/vilnius/gps_full.txt')
         .then(response => response.text())
         .then(data => {
-            markerPairs = createMarkerPairs(firstPairs, markersNew);
-            markerPairs.forEach(pair => {
-                moveMarkerSmoothly(pair.old, pair.new.marker.getLatLng(), 1500);
-            });
-            markersOld = markersNew;
-            markersNew = [];
-
             const zoomLevel = map.getZoom();
             const lines = data.split('\n').filter(line => line.trim() !== '');
             lines.shift();
-
+            markersNew = [];
             lines.forEach(line => {
                 const [Transportas, Marsrutas, ReisoID, MasinosNumeris, Ilguma, Platuma, Greitis, Azimutas, ReisoPradziaMinutemis, NuokrypisSekundemis, MatavimoLaikas, MasinosTipas, KryptiesTipas, KryptiesPavadinimas, ReisoIdGTFS] = line.split(',');
 
@@ -114,15 +107,23 @@ function fetchAndUpdateData() {
                 createPopup(marker, dictionary);
             });
 
-            if (markersOld.length == 0) {
+            if (markersOld.length === 0) {
+                console.log("init");
                 firstPairs = markersNew;
                 markersOld = markersNew;
-                markersNew.forEach(marker => {
-                    markerGroup.addLayer(marker.marker);
-                });
+                updateMarkers(markersNew);
                 updateRouteOptions();
                 updateDirectionOptions();
             }
+
+            markerPairs = createMarkerPairs(markersOld, markersNew);
+            console.log(markerPairs[3]);
+            console.log(markersOld[3]);
+            console.log(markersNew[3]);
+            markerPairs.forEach(pair => {
+                moveMarkerSmoothly(pair.old, pair.new.marker.getLatLng(), 1500);
+            });
+            markersOld = markersNew;
         })
         .catch(err => console.error("Error fetching data:", err));
 }
@@ -254,6 +255,10 @@ function updateSelection(markersNew) {
     updateMarkers(markersNew);
 }
 
+//Fetch data every 5 seconds
+fetchAndUpdateData();
+setInterval(fetchAndUpdateData, 5000);
+
 //Add event listeners for filtering
 selection.forEach(sel => {
     document.getElementById(sel[0])
@@ -263,6 +268,4 @@ selection.forEach(sel => {
         });
 });
 
-//Fetch data every 5 seconds
-fetchAndUpdateData();
-setInterval(fetchAndUpdateData, 5000);
+
