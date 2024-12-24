@@ -7,7 +7,7 @@
 
 #map {
 	margin: 3px;
-	width: 50%;
+	width: 75%;
 	min-height: 500px;
 	height: auto;
 }
@@ -16,6 +16,7 @@
 	margin-top: 20px;
 	width: 75%;
 	display: flex;
+	flex-direction: row;
 }
 
 #options {
@@ -33,4 +34,19 @@
 }
 option {
 	font-size: inherit;
+}
+
+@media (max-aspect-ratio: 3 / 4) {
+	#main {
+		flex-direction: column;
+		width: 100%;
+	}
+	#map {
+		width: 100%;
+		min-height: 500px;
+		height: auto;
+	}
+	#options {
+		width: 90%;
+	}
 }
