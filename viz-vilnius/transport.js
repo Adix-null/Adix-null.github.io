@@ -58,10 +58,13 @@ function fetchAndUpdateData() {
     fetch('https://www.stops.lt/vilnius/gps_full.txt')
         .then(response => response.text())
         .then(data => {
+
+            markersNew = [];
+
             const zoomLevel = map.getZoom();
             const lines = data.split('\n').filter(line => line.trim() !== '');
             lines.shift();
-            markersNew = [];
+
             lines.forEach(line => {
                 const [Transportas, Marsrutas, ReisoID, MasinosNumeris, Ilguma, Platuma, Greitis, Azimutas, ReisoPradziaMinutemis, NuokrypisSekundemis, MatavimoLaikas, MasinosTipas, KryptiesTipas, KryptiesPavadinimas, ReisoIdGTFS] = line.split(',');
 
@@ -95,6 +98,7 @@ function fetchAndUpdateData() {
                     color: markerColor,
                     fillColor: markerColor,
                     fillOpacity: 1,
+
                 });
                 markersNew.push({ marker: marker, busData: busData, visible: true });
 
@@ -107,23 +111,32 @@ function fetchAndUpdateData() {
                 createPopup(marker, dictionary);
             });
 
-            if (markersOld.length === 0) {
-                console.log("init");
+            if (markersOld.length == 0) {
                 firstPairs = markersNew;
                 markersOld = markersNew;
-                updateMarkers(markersNew);
+                updateSelection(markersNew);
                 updateRouteOptions();
                 updateDirectionOptions();
             }
 
+            //neveikia ir tingiu taisyti
             markerPairs = createMarkerPairs(markersOld, markersNew);
-            console.log(markerPairs[3]);
-            console.log(markersOld[3]);
-            console.log(markersNew[3]);
             markerPairs.forEach(pair => {
                 moveMarkerSmoothly(pair.old, pair.new.marker.getLatLng(), 1500);
             });
             markersOld = markersNew;
+
+            updateSelection(markersNew);
+            // markerGroup.eachLayer(function (layer) {
+            //     eqNM = markersNew.find(newMarker => newMarker.busData.MasinosNumeris === layer.busId);
+            //     //console.log(eqNM);
+            //     //moveMarkerSmoothly(layer, eqNM.getLatLng(), 1500);
+            //     // Do something with each layer (e.g., marker)
+            //     console.log(layer); // Logs the marker (or layer) to the console
+            //     if (layer instanceof L.Marker) {
+            //         console.log("Marker position:", layer.getLatLng());
+            //     }
+            // });
         })
         .catch(err => console.error("Error fetching data:", err));
 }
@@ -255,10 +268,6 @@ function updateSelection(markersNew) {
     updateMarkers(markersNew);
 }
 
-//Fetch data every 5 seconds
-fetchAndUpdateData();
-setInterval(fetchAndUpdateData, 5000);
-
 //Add event listeners for filtering
 selection.forEach(sel => {
     document.getElementById(sel[0])
@@ -268,4 +277,6 @@ selection.forEach(sel => {
         });
 });
 
-
+//Fetch data every 5 seconds
+fetchAndUpdateData();
+setInterval(fetchAndUpdateData, 5000);
