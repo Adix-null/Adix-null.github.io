@@ -1,7 +1,7 @@
-// import fs from 'fs';
-// import fetch from 'node-fetch';
+import fs from 'fs';
+import fetch from 'node-fetch';
 
-price_url = "https://www.steamwebapi.com/steam/api/items?key=72ZDY58DKG0WJNJ4&sort_by=name&item_group=rifle,sniper+rifle,machinegun,pistol,smg,shotgun";
+price_url = "https://www.steamwebapi.com/steam/api/items?key=72ZDY58DKG0WJNJ4&sort_by=name&item_group=rifle,sniper+rifle,machinegun,pistol,smg,shotgun,equipment";
 price_path = "./items.json";
 info_url = "https://bymykel.github.io/CSGO-API/api/en/skins.json";
 info_path = "./skins.json";
@@ -23,7 +23,23 @@ const raritiesOrder = [
 ];
 const delta = 0.000001;
 const fee = 13;
-const price_mode = "latest";
+const priceTypeNames = [
+    "pricelatest",
+    "pricelatestsell",
+    "pricelatestsell24h",
+    "pricelatestsell",
+    "pricemedian",
+    "pricemedian24h",
+    "pricemedian7d",
+    "priceavg",
+    "priceavg24h",
+    "priceavg7d",
+    "pricesafe",
+    "pricemin",
+    "pricemax",
+    "buyorderprice",
+];
+const price_type = priceTypeNames[10];
 
 processItems();
 
@@ -49,6 +65,8 @@ async function processItems() {
             (a, b) => b.expected_value - a.expected_value
         );
         console.log(tradeupList);
+
+        fs.writeFileSync("tradeups.json", JSON.stringify(tradeupList));
     } catch (error) {
         console.error("Error processing items:", error);
     }
@@ -134,7 +152,7 @@ function expandItemsByFloatRanges(collections) {
                 items.flatMap((item) => {
                     return rangeDictionary
                         .filter(
-                            (range) => item.max_float >= range.min && item.min_float <= range.max
+                            (range) => item.max_float > range.min && item.min_float <= range.max
                         )
                         .map((range) => ({
                             ...item,
@@ -198,19 +216,35 @@ function insertPriceInfo(collections, priceData) {
                 rarityName,
                 items.map((item) => {
                     const priceInfo = priceData.find((p) => p.markethashname === item.name);
+                    prices = {
+                        pricelatest: Math.max(priceInfo?.pricelatest, 0),
+                        pricelatestsell: Math.max(priceInfo?.pricelatestsell, 0),
+                        pricelatestsell24h: Math.max(priceInfo?.pricelatestsell24h, 0),
+                        pricelatestsell: Math.max(priceInfo?.pricelatestsell7d, 0),
+
+                        pricemedian: Math.max(priceInfo?.pricemedian, 0),
+                        pricemedian24h: Math.max(priceInfo?.pricemedian24h, 0),
+                        pricemedian7d: Math.max(priceInfo?.pricemedian7d, 0),
+
+                        priceavg: Math.max(priceInfo?.priceavg, 0),
+                        priceavg24h: Math.max(priceInfo?.priceavg24h, 0),
+                        priceavg7d: Math.max(priceInfo?.priceavg7d, 0),
+
+                        pricesafe: Math.max(priceInfo?.pricesafe, 0),
+                        pricemin: Math.max(priceInfo?.pricemin, 0),
+                        pricemax: Math.max(priceInfo?.pricemax, 0),
+
+                        buyorderprice: Math.max(priceInfo?.buyorderprice, 0),
+                        sold24h: Math.max(priceInfo?.sold24h, 0),
+                        sold7d: Math.max(priceInfo?.sold7d, 0),
+                        offervolume: Math.max(priceInfo?.offervolume, 0),
+                    };
                     return {
                         ...item,
-                        image: priceInfo ? priceInfo.itemimage : "",
-                        steamurl: priceInfo ? priceInfo.steamurl : "",
-                        pricelatest: priceInfo ? priceInfo.pricelatest : 0,
-                        pricemedian24h: priceInfo ? priceInfo.pricemedian24h : 0,
-                        pricemedian7d: priceInfo ? priceInfo.pricemedian7d : 0,
-                        priceavg24h: priceInfo ? priceInfo.priceavg24h : 0,
-                        priceavg7d: priceInfo ? priceInfo.priceavg7d : 0,
-                        buyorderprice: priceInfo ? priceInfo.buyorderprice : 0,
-                        sold24h: priceInfo ? priceInfo.sold24h : 0,
-                        sold7d: priceInfo ? priceInfo.sold7d : 0,
-                        unstable: priceInfo ? priceInfo.unstable : true,
+                        image: priceInfo?.itemimage,
+                        steamurl: priceInfo?.steamurl,
+                        prices: prices,
+                        unstable: priceInfo?.unstable,
                     };
                 }),
             ])
@@ -297,7 +331,7 @@ function findCheapestItem(tradeups, groupedItems) {
 
         const cheapestItem = matchingItems.reduce(
             (minItem, item) =>
-                !minItem || item.pricelatest < minItem.pricelatest ? item : minItem,
+                !minItem || item.prices[price_type] < minItem.prices[price_type] ? item : minItem,
             null
         );
 
@@ -305,17 +339,21 @@ function findCheapestItem(tradeups, groupedItems) {
         const floatRange = rangeDictionary.find(
             (range) => range.name === cheapestItem.float_category
         );
-        if (
-            max_required_float < floatRange.min ||
-            max_required_float > floatRange.max
-        ) {
-            max_required_float_correct = floatRange.max;
+        if (max_required_float < floatRange.min || max_required_float > floatRange.max) {
+            max_required_float_correct = Math.min(floatRange.max, cheapestItem.max_float);
         }
+
+        max_required_float_correct -= delta;
+        const rangeScarcity = rangeDictionary.find(
+            (range) => max_required_float_correct > range.min && max_required_float_correct <= range.max
+        );
+        floatScarcity = 100 * (max_required_float_correct - rangeScarcity.min) / (rangeScarcity.max - rangeScarcity.min);
 
         return cheapestItem
             ? {
                 ...tradeup,
-                max_required_float: max_required_float_correct - delta,
+                max_required_float: max_required_float_correct,
+                availability: floatScarcity.toFixed(1),
                 input: cheapestItem,
             }
             : null;
@@ -334,6 +372,10 @@ function findCheapestItem(tradeups, groupedItems) {
     });
 
     return uniqueItems;
+}
+
+function setItemPriceType(item) {
+
 }
 
 function calculateTradeupOutcomes(tradeups, groupedItems) {
@@ -380,12 +422,12 @@ function calculateTradeupOutcomes(tradeups, groupedItems) {
 function calculateExpectedValue(tradeups) {
     return tradeups.map((tradeup) => {
         const totalOutcomePrice = tradeup.outcomes.reduce(
-            (sum, outcome) => sum + outcome.pricelatest,
+            (sum, outcome) => sum + outcome.prices[price_type],
             0
         );
 
         const expectedValue =
-            -10 * tradeup.input.pricelatest +
+            -10 * tradeup.input.prices[price_type] +
             (totalOutcomePrice / tradeup.outcomes.length) * (1 - fee * 0.01);
 
         return {
