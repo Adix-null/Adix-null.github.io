@@ -1,10 +1,11 @@
-import fs from 'fs';
-import fetch from 'node-fetch';
+const priceUrl =
+    "https://www.steamwebapi.com/steam/api/items?key=72ZDY58DKG0WJNJ4&sort_by=name&item_group=rifle,sniper+rifle,machinegun,pistol,smg,shotgun,equipment";
+const pricePath = new URL("./items.json", import.meta.url);
+const infoUrl = "https://bymykel.github.io/CSGO-API/api/en/skins.json";
+const infoPath = new URL("./skins.json", import.meta.url);
+const tradeupPath = new URL("./tradeups.json", import.meta.url);
 
-price_url = "https://www.steamwebapi.com/steam/api/items?key=72ZDY58DKG0WJNJ4&sort_by=name&item_group=rifle,sniper+rifle,machinegun,pistol,smg,shotgun,equipment";
-price_path = "./items.json";
-info_url = "https://bymykel.github.io/CSGO-API/api/en/skins.json";
-info_path = "./skins.json";
+//deno run--allow - read--allow - write--allow - net tradeuptracker / logic.js
 
 const rangeDictionary = [
     { min: 0.0, max: 0.07, name: "Factory New" },
@@ -13,14 +14,7 @@ const rangeDictionary = [
     { min: 0.38, max: 0.45, name: "Well-Worn" },
     { min: 0.45, max: 1.0, name: "Battle-Scarred" },
 ];
-const raritiesOrder = [
-    "Consumer Grade",
-    "Industrial Grade",
-    "Mil-Spec Grade",
-    "Restricted",
-    "Classified",
-    "Covert",
-];
+const raritiesOrder = ["Consumer Grade", "Industrial Grade", "Mil-Spec Grade", "Restricted", "Classified", "Covert"];
 const delta = 0.000001;
 const fee = 13;
 const priceTypeNames = [
@@ -45,8 +39,12 @@ processItems();
 
 async function processItems() {
     try {
-        const priceData = await fetchJSON(price_path);
-        const skinsData = await fetchJSON(info_path);
+        const priceData = await saveUrlToJSON(priceUrl, pricePath);
+        const skinsData = await saveUrlToJSON(infoUrl, infoPath);
+        //const priceData = await readJSON(pricePath);
+        console.log("Price read successful");
+        //const skinsData = await readJSON(infoPath);
+        console.log("Info read successful");
 
         let updatedItems = groupItemsByCollection(skinsData);
         updatedItems = groupItemsByRarity(updatedItems)
@@ -56,23 +54,30 @@ async function processItems() {
         updatedItems = expandItemsByFloatRanges(updatedItems);
         updatedItems = generateStattrakCollections(updatedItems);
         updatedItems = insertPriceInfo(updatedItems, priceData);
-        console.log(updatedItems);
 
-        tradeupList = calculateTradeupRequirements(updatedItems);
+        let tradeupList = calculateTradeupRequirements(updatedItems);
         tradeupList = findCheapestItem(tradeupList, updatedItems);
         tradeupList = calculateTradeupOutcomes(tradeupList, updatedItems);
-        tradeupList = calculateExpectedValue(tradeupList).sort(
-            (a, b) => b.expected_value - a.expected_value
-        );
-        console.log(tradeupList);
+        tradeupList = calculateExpectedValue(tradeupList).sort((a, b) => b.expected_value - a.expected_value);
 
-        fs.writeFileSync("tradeups.json", JSON.stringify(tradeupList));
+        await Deno.writeTextFile(tradeupPath, JSON.stringify(tradeupList));
+        console.log("File written successfully!");
     } catch (error) {
         console.error("Error processing items:", error);
     }
 }
 
 //web info logic
+
+async function readJSON(filePath) {
+    try {
+        const data = await Deno.readTextFile(filePath);
+        return JSON.parse(data);
+    } catch (error) {
+        console.error("Error reading file:", error);
+        throw error;
+    }
+}
 
 async function fetchJSON(url) {
     try {
@@ -84,17 +89,16 @@ async function fetchJSON(url) {
     }
 }
 
-async function saveUrlToJSON(url, filePath) {
+async function saveUrlToJSON(url, fileURL) {
     try {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+        const data = await fetchJSON(url);
+        const jsonString = JSON.stringify(data, null, 2);  // Pretty-print JSON
 
-        const data = await response.json();
-        fs.writeFileSync(filePath, data);
+        await Deno.writeTextFile(fileURL, jsonString);
 
-        console.log(`Saved response to ${filePath}`);
+        console.log(`Data from ${url} has been saved to ${filename}`);
     } catch (error) {
-        console.error("Error:", error);
+        console.error(`Error saving data from ${url} to ${filename}:`, error);
     }
 }
 
@@ -151,9 +155,7 @@ function expandItemsByFloatRanges(collections) {
                 rarity,
                 items.flatMap((item) => {
                     return rangeDictionary
-                        .filter(
-                            (range) => item.max_float > range.min && item.min_float <= range.max
-                        )
+                        .filter((range) => item.max_float > range.min && item.min_float <= range.max)
                         .map((range) => ({
                             ...item,
                             name: item.name + " (" + range.name + ")",
@@ -216,7 +218,7 @@ function insertPriceInfo(collections, priceData) {
                 rarityName,
                 items.map((item) => {
                     const priceInfo = priceData.find((p) => p.markethashname === item.name);
-                    prices = {
+                    const prices = {
                         pricelatest: Math.max(priceInfo?.pricelatest, 0),
                         pricelatestsell: Math.max(priceInfo?.pricelatestsell, 0),
                         pricelatestsell24h: Math.max(priceInfo?.pricelatestsell24h, 0),
@@ -262,10 +264,7 @@ function calculateTradeupRequirements(collections) {
 
         rarities.forEach(([rarity, items], index) => {
             const indexName = raritiesOrder.indexOf(rarity);
-            const prevRarity =
-                indexName > 0 && indexName < raritiesOrder.length
-                    ? raritiesOrder[indexName - 1]
-                    : null;
+            const prevRarity = indexName > 0 && indexName < raritiesOrder.length ? raritiesOrder[indexName - 1] : null;
 
             // Skip if this is the lowest rarity
             if (!prevRarity) return;
@@ -274,12 +273,9 @@ function calculateTradeupRequirements(collections) {
             const requiredFloats = new Set();
 
             items.forEach((item) => {
-                const qualityFloat = rangeDictionary.find(
-                    (range) => range.name === item.float_category
-                ).max;
+                const qualityFloat = rangeDictionary.find((range) => range.name === item.float_category).max;
                 const { min_float, max_float } = item;
-                const maxRequiredFloat =
-                    (Math.min(qualityFloat, max_float) - min_float) / (max_float - min_float);
+                const maxRequiredFloat = (Math.min(qualityFloat, max_float) - min_float) / (max_float - min_float);
                 requiredFloats.add(maxRequiredFloat);
             });
 
@@ -314,31 +310,24 @@ function findCheapestItem(tradeups, groupedItems) {
     const bestTradeupItems = tradeups.map((tradeup) => {
         const { collection, rarity, max_required_float } = tradeup;
 
-        const matchingCollection = groupedItems.find(
-            (col) => col.collectionName === collection
-        );
+        const matchingCollection = groupedItems.find((col) => col.collectionName === collection);
         if (!matchingCollection) return null;
 
         const itemsOfRarity = matchingCollection.rarities.get(rarity);
         if (!itemsOfRarity) return null;
 
         const matchingItems = itemsOfRarity.filter((item) => {
-            const floatRange = rangeDictionary.find(
-                (range) => range.name === item.float_category
-            );
+            const floatRange = rangeDictionary.find((range) => range.name === item.float_category);
             return floatRange && max_required_float > floatRange.min;
         });
 
         const cheapestItem = matchingItems.reduce(
-            (minItem, item) =>
-                !minItem || item.prices[price_type] < minItem.prices[price_type] ? item : minItem,
+            (minItem, item) => (!minItem || item.prices[price_type] < minItem.prices[price_type] ? item : minItem),
             null
         );
 
         let max_required_float_correct = max_required_float;
-        const floatRange = rangeDictionary.find(
-            (range) => range.name === cheapestItem.float_category
-        );
+        const floatRange = rangeDictionary.find((range) => range.name === cheapestItem.float_category);
         if (max_required_float < floatRange.min || max_required_float > floatRange.max) {
             max_required_float_correct = Math.min(floatRange.max, cheapestItem.max_float);
         }
@@ -347,7 +336,8 @@ function findCheapestItem(tradeups, groupedItems) {
         const rangeScarcity = rangeDictionary.find(
             (range) => max_required_float_correct > range.min && max_required_float_correct <= range.max
         );
-        floatScarcity = 100 * (max_required_float_correct - rangeScarcity.min) / (rangeScarcity.max - rangeScarcity.min);
+        const floatScarcity =
+            (100 * (max_required_float_correct - rangeScarcity.min)) / (rangeScarcity.max - rangeScarcity.min);
 
         return cheapestItem
             ? {
@@ -374,10 +364,6 @@ function findCheapestItem(tradeups, groupedItems) {
     return uniqueItems;
 }
 
-function setItemPriceType(item) {
-
-}
-
 function calculateTradeupOutcomes(tradeups, groupedItems) {
     return tradeups.map((tradeup) => {
         const { collection, rarity, max_required_float, input } = tradeup;
@@ -387,25 +373,19 @@ function calculateTradeupOutcomes(tradeups, groupedItems) {
 
         const nextRarity = raritiesOrder[nextRarityIndex];
 
-        const matchingCollection = groupedItems.find(
-            (col) => col.collectionName === collection
-        );
+        const matchingCollection = groupedItems.find((col) => col.collectionName === collection);
         if (!matchingCollection) return tradeup;
 
         const possibleOutcomes = matchingCollection.rarities.get(nextRarity) || [];
 
         const validOutcomes = possibleOutcomes
             .map((skin) => {
-                const expectedFloat =
-                    max_required_float * (skin.max_float - skin.min_float) + skin.min_float;
+                const expectedFloat = max_required_float * (skin.max_float - skin.min_float) + skin.min_float;
 
-                const floatCategory = rangeDictionary.find(
-                    (range) => range.name === skin.float_category
-                );
+                const floatCategory = rangeDictionary.find((range) => range.name === skin.float_category);
 
                 if (!floatCategory) return null;
-                if (expectedFloat < floatCategory.min || expectedFloat > floatCategory.max)
-                    return null;
+                if (expectedFloat < floatCategory.min || expectedFloat > floatCategory.max) return null;
 
                 skin.output_float = expectedFloat.toFixed(6); // Keep precision
                 return skin;
@@ -421,18 +401,45 @@ function calculateTradeupOutcomes(tradeups, groupedItems) {
 
 function calculateExpectedValue(tradeups) {
     return tradeups.map((tradeup) => {
-        const totalOutcomePrice = tradeup.outcomes.reduce(
-            (sum, outcome) => sum + outcome.prices[price_type],
-            0
-        );
+        const profitBruto = tradeup.outcomes.reduce((sum, outcome) => sum + outcome.prices[price_type], 0) / tradeup.outcomes.length;
+        const expectedValue = 10 * -tradeup.input.prices[price_type] + profitBruto * (1 - fee * 0.01);
 
-        const expectedValue =
-            -10 * tradeup.input.prices[price_type] +
-            (totalOutcomePrice / tradeup.outcomes.length) * (1 - fee * 0.01);
+        const input = {
+            count: 10,
+            name: tradeup.input.name,
+            min_float: tradeup.input.min_float,
+            max_float: tradeup.input.max_float,
+            stattrak: tradeup.input.stattrak,
+            image: tradeup.input.image,
+            float_category: tradeup.input.float_category,
+            steamurl: tradeup.input.steamurl,
+            prices: tradeup.input.prices,
+            unstable: tradeup.input.unstable,
+        };
+
+        const outcomes = tradeup.outcomes.map((outcome) => {
+            return {
+                name: outcome.name,
+                min_float: outcome.min_float,
+                max_float: outcome.max_float,
+                stattrak: outcome.stattrak,
+                image: outcome.image,
+                float_category: outcome.float_category,
+                steamurl: outcome.steamurl,
+                prices: outcome.prices,
+                unstable: outcome.unstable,
+                output_float: outcome.output_float,
+            }
+        });
 
         return {
-            ...tradeup,
+            max_required_float: tradeup.max_required_float,
+            collection: tradeup.collection,
+            rarity: tradeup.rarity,
+            availability: tradeup.availability,
             expected_value: expectedValue,
+            inputs: input,
+            outcomes: outcomes,
         };
     });
 }
