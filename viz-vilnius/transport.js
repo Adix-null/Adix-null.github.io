@@ -17,6 +17,10 @@ const markerGroup = L.layerGroup().addTo(map);
 
 const defAll = "Visi";
 
+selectionConditionColor = "Visi";
+selectionConditionRoute = "Visi";
+selectionConditionDirection = "Visi";
+
 selection = [
     ["transport-select", "Visi"],
     ["route-select", "Visi"],
@@ -100,7 +104,13 @@ function fetchAndUpdateData() {
                     fillOpacity: 1,
 
                 });
-                markersNew.push({ marker: marker, busData: busData, visible: true });
+
+                updateSelection(markersNew);
+
+                if (selectionConditionColor && selectionConditionRoute && selectionConditionDirection) {
+                    markersNew.push({ marker: marker, busData: busData, visible: true });
+
+                }
 
                 const dictionary = [
                     ["name", Marsrutas],
@@ -111,22 +121,26 @@ function fetchAndUpdateData() {
                 createPopup(marker, dictionary);
             });
 
-            if (markersOld.length == 0) {
+            if (firstPairs.length == 0) {
                 firstPairs = markersNew;
                 markersOld = markersNew;
-                updateSelection(markersNew);
+                console.log("init");
+                //updateSelection(markersNew);
+                markersNew.forEach(marker => {
+                    markerGroup.addLayer(marker.marker);
+                });
                 updateRouteOptions();
                 updateDirectionOptions();
             }
 
             //neveikia ir tingiu taisyti
-            markerPairs = createMarkerPairs(markersOld, markersNew);
+            markerPairs = createMarkerPairs(firstPairs, markersNew);
             markerPairs.forEach(pair => {
                 moveMarkerSmoothly(pair.old, pair.new.marker.getLatLng(), 1500);
             });
             markersOld = markersNew;
 
-            updateSelection(markersNew);
+            //updateSelection(markersNew);
             // markerGroup.eachLayer(function (layer) {
             //     eqNM = markersNew.find(newMarker => newMarker.busData.MasinosNumeris === layer.busId);
             //     //console.log(eqNM);
@@ -263,9 +277,9 @@ function updateSelection(markersNew) {
         selectionConditionRoute = selection[1][1] === defAll ? true : (marker.busData.Marsrutas === selection[1][1]);
         selectionConditionDirection = selection[2][1] === defAll ? true : (marker.busData.KryptiesPavadinimas === selection[2][1]);
 
-        marker.visible = (selectionConditionColor && selectionConditionRoute && selectionConditionDirection) ? true : false;
+        //marker.visible = (selectionConditionColor && selectionConditionRoute && selectionConditionDirection) ? true : false;
     });
-    updateMarkers(markersNew);
+    //updateMarkers(markersNew);
 }
 
 //Add event listeners for filtering
