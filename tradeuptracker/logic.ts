@@ -43,36 +43,58 @@ const priceTypeNames: string[] = [
 	"pricemax",
 	"buyorderprice",
 ];
-const price_type: string = priceTypeNames[10];
+const price_type: string = priceTypeNames[0];
+const fetch_web: boolean = false;
 
 processItems();
 
 async function processItems() {
 	try {
-		//const priceData = await saveUrlToJSON(priceUrl, pricePath);
-		const priceData: SkinPrice[] = await readJSON(pricePath);
-		console.log("Price read successful");
+		const start: number = Date.now();
+		let priceData: SkinPrice[];
+		if (fetch_web) priceData = await saveUrlToJSON(priceUrl, pricePath);
+		priceData = await readJSON(pricePath);
+		console.log("Price read");
 
-		//const skinsData = await saveUrlToJSON(infoUrl, infoPath);
-		const skinsData: SkinInfo[] = await readJSON(infoPath);
-		console.log("Info read successful");
+		let skinsData: SkinInfo[];
+		if (fetch_web) skinsData = await saveUrlToJSON(infoUrl, infoPath);
+		skinsData = await readJSON(infoPath);
+		console.log("Info read");
 
-		let updatedItems: any = groupItemsByCollection(skinsData);
-		updatedItems = groupItemsByRarity(updatedItems)
+		let GroupedInfo: any = groupItemsByCollection(skinsData);
+		console.log("Gruouped by collection info");
+		GroupedInfo = groupItemsByRarity(GroupedInfo)
 			.filter((collection) => collection.rarities.size > 1)
 			.sort((a, b) => a.collectionName.localeCompare(b.collectionName));
+		console.log("Gruouped by rarity info");
 
-		updatedItems = expandItemsByFloatRanges(updatedItems);
-		updatedItems = generateStattrakCollections(updatedItems);
-		updatedItems = insertPriceInfo(updatedItems, priceData);
+		let groupedPrices: any = groupPricesByCollection(priceData);
+		console.log("Gruouped by collection price");
+		groupedPrices = groupPricesByRarity(groupedPrices)
+			.filter((collection) => collection.rarities.size > 1)
+			.sort((a, b) => a.collectionName.localeCompare(b.collectionName));
+		console.log("Gruouped by rarity price");
 
-		let tradeupList: any = calculateTradeupRequirements(updatedItems);
-		tradeupList = findCheapestItem(tradeupList, updatedItems);
-		tradeupList = calculateTradeupOutcomes(tradeupList, updatedItems);
+		GroupedInfo = expandItemsByFloatRanges(GroupedInfo);
+		console.log("Expanded float");
+		GroupedInfo = generateStattrakCollections(GroupedInfo);
+		console.log("Generated starttrak");
+		GroupedInfo = insertPriceInfo(GroupedInfo, groupedPrices);
+		console.log("Insetred price");
+
+		let tradeupList: any = calculateTradeupRequirements(GroupedInfo);
+		console.log("Tradeup max req float");
+		tradeupList = findCheapestItem(tradeupList, GroupedInfo);
+		console.log("Cheapest item");
+		tradeupList = calculateTradeupOutcomes(tradeupList, GroupedInfo);
+		console.log("Tradeup outcomes");
 		tradeupList = calculateExpectedValue(tradeupList).sort((a, b) => b.expected_value - a.expected_value);
+		console.log("Expected value");
 
 		await Deno.writeTextFile(tradeupPath, JSON.stringify(tradeupList));
 		console.log("File written successfully!");
+
+		console.log((Date.now() - start) / 1000 + "s");
 	} catch (error) {
 		console.error("Error processing items:", error);
 	}
@@ -80,7 +102,7 @@ async function processItems() {
 
 //web info logic
 
-async function readJSON(filePath: URL) {
+async function readJSON(filePath: URL): Promise<any> {
 	try {
 		const data = await Deno.readTextFile(filePath);
 		return JSON.parse(data);
@@ -100,7 +122,7 @@ async function fetchJSON(url: URL) {
 	}
 }
 
-async function saveUrlToJSON(url: URL, fileURL: URL) {
+async function saveUrlToJSON(url: URL, fileURL: URL): Promise<any> {
 	try {
 		const data = await fetchJSON(url);
 		const jsonString = JSON.stringify(data, null, 2); // Pretty-print JSON
@@ -110,6 +132,7 @@ async function saveUrlToJSON(url: URL, fileURL: URL) {
 		console.log(`Data from ${url} has been saved to ${fileURL}`);
 	} catch (error) {
 		console.error(`Error saving data from ${url} to ${fileURL}:`, error);
+		throw error;
 	}
 }
 
@@ -132,12 +155,32 @@ function groupItemsByCollection(data: SkinInfo[]): { [collectionName: string]: S
 	return groups;
 }
 
-interface GroupedRarities {
+function groupPricesByCollection(data: SkinPrice[]): { [collectionName: string]: SkinPrice[] } {
+	const groups: { [collectionName: string]: SkinPrice[] } = {};
+	data.forEach((item: SkinPrice) => {
+		const collectionName = item.tag7;
+		if (!collectionName) return; // Skip if no collection exists
+
+		if (!groups[collectionName]) {
+			groups[collectionName] = [];
+		}
+		groups[collectionName].push(item);
+	});
+
+	return groups;
+}
+
+interface GroupedRaritiesInfo {
 	collectionName: string;
 	rarities: Map<string, SkinInfo[]>;
 }
 
-function groupItemsByRarity(groups: { [collectionName: string]: SkinInfo[] }): GroupedRarities[] {
+interface GroupedRaritiesPrice {
+	collectionName: string;
+	rarities: Map<string, SkinPrice[]>;
+}
+
+function groupItemsByRarity(groups: { [collectionName: string]: SkinInfo[] }): GroupedRaritiesInfo[] {
 	return Object.entries(groups).map(([name, items]) => {
 		// Bin items by rarity
 		const rarities: { [rarityName: string]: SkinInfo[] } = items.reduce((bins, item) => {
@@ -151,6 +194,32 @@ function groupItemsByRarity(groups: { [collectionName: string]: SkinInfo[] }): G
 
 		// Sort the rarities based on raritiesOrder
 		const sortedRarities: Map<string, SkinInfo[]> = new Map(
+			Object.keys(rarities)
+				.sort((a, b) => raritiesOrder.indexOf(a) - raritiesOrder.indexOf(b))
+				.map((key) => [key, rarities[key]])
+		);
+
+		return {
+			collectionName: name,
+			rarities: sortedRarities,
+		};
+	});
+}
+
+function groupPricesByRarity(groups: { [collectionName: string]: SkinPrice[] }): GroupedRaritiesPrice[] {
+	return Object.entries(groups).map(([name, items]) => {
+		// Bin items by rarity
+		const rarities: { [rarityName: string]: SkinPrice[] } = items.reduce((bins, item) => {
+			const rarityName: string = item.rarity;
+			if (!bins[rarityName]) {
+				bins[rarityName] = [];
+			}
+			bins[rarityName].push(item);
+			return bins;
+		}, {} as { [rarityName: string]: SkinPrice[] });
+
+		// Sort the rarities based on raritiesOrder
+		const sortedRarities: Map<string, SkinPrice[]> = new Map(
 			Object.keys(rarities)
 				.sort((a, b) => raritiesOrder.indexOf(a) - raritiesOrder.indexOf(b))
 				.map((key) => [key, rarities[key]])
@@ -237,14 +306,21 @@ function generateStattrakCollections(collections: Collection[]): Collection[] {
 	});
 }
 
-function insertPriceInfo(collections: Collection[], priceData: SkinPrice[]) {
+function insertPriceInfo(collections: Collection[], priceData: GroupedRaritiesPrice[]) {
 	return collections.map((collection) => ({
 		...collection,
 		rarities: new Map(
 			[...collection.rarities.entries()].map(([rarityName, items]) => [
 				rarityName,
 				items.map((item) => {
-					const priceInfo: SkinPrice | undefined = priceData.find((p) => p.markethashname === item.name);
+					const collection = priceData.find((c) => c.collectionName === item.collections[0]?.name);
+					if (!collection) return undefined;
+
+					const rarityGroup = collection.rarities.get(item.rarity.name);
+					if (!rarityGroup) return undefined;
+
+					const priceInfo: SkinPrice | undefined = rarityGroup.find((skin) => skin.markethashname === item.name);
+
 					const prices: Prices = {
 						pricelatest: priceInfo?.pricelatest ?? 0,
 						pricelatestsell: priceInfo?.pricelatestsell ?? 0,
@@ -416,7 +492,7 @@ function findCheapestItem(
 
 function calculateTradeupOutcomes(tradeups: Tradeup[], groupedItems: Collection[]): Tradeup[] {
 	return tradeups.map((tradeup) => {
-		const { collection, rarity, max_required_float, input } = tradeup;
+		const { collection, rarity, max_required_float } = tradeup;
 
 		// Get the next rarity in the rarities order
 		const nextRarityIndex = raritiesOrder.indexOf(rarity) + 1;
