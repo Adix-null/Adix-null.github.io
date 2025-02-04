@@ -1,30 +1,36 @@
-<script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
-</script>
+<script setup>
+import { ref } from 'vue';
 
+const name = ref("test");
+const status = ref(1);
+const mydata = ref([3, 5, 945]);
+const linkas = ref("https://wikipedia.org");
+
+const myevent = () => {
+  status.value = status.value > 3 ? 0 : status.value + 1;
+};
+
+</script>
+<!-- 42:40 -->
 <template>
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
-  </div>
-  <HelloWorld msg="Vite + Vue" />
+  <h1>{{ name }}</h1>
+  <p v-if="status">okej</p>
+  <p v-else>nyet</p>
+
+  <h2>data row</h2>
+  <a v-for="dat in mydata" :key="dat">{{ dat }}
+    <hr />
+  </a>
+  <a :href="linkas">gein nooledž</a>
+
+  <br />
+
+  <button @click="myevent">Do something idk</button>
+
 </template>
 
 <style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+h1 {
+  font-size: 2em;
 }
 </style>
