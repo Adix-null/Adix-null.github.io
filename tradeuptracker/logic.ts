@@ -25,7 +25,7 @@ const raritiesOrder: string[] = [
 	"Classified",
 	"Covert",
 ];
-const delta: number = 0.000001;
+const epsilon: number = 0.000001;
 const fee: number = 13;
 const priceTypeNames: string[] = [
 	"pricelatest",
@@ -460,7 +460,7 @@ function findCheapestItem(
 			max_required_float_correct = Math.min(floatRange?.max ?? 0, cheapestItem.max_float);
 		}
 
-		max_required_float_correct -= delta;
+		max_required_float_correct -= epsilon;
 		const rangeScarcity = rangeDictionary.find(
 			(range) => max_required_float_correct > range.min && max_required_float_correct <= range.max
 		);
