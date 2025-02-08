@@ -1,4 +1,4 @@
-import { SkinInfo, SkinPrice, Prices, FinalItem } from "./types.ts";
+import { SkinInfo, SkinPrice, Prices, FinalItem, Tradeup } from "./types.ts";
 
 const priceUrl: URL = new URL(
 	"https://www.steamwebapi.com/steam/api/items?key=72ZDY58DKG0WJNJ4&sort_by=name&item_group=rifle,sniper+rifle,machinegun,pistol,smg,shotgun,equipment"
@@ -9,6 +9,7 @@ const infoPath: URL = new URL("./skins.json", import.meta.url);
 const tradeupPath: URL = new URL("./tradeups.json", import.meta.url);
 
 //deno run --allow-read --allow-write --allow-net tradeuptracker/logic.ts
+//TODO: unicode names dont work
 
 const rangeDictionary: Range[] = [
 	{ min: 0.0, max: 0.07, name: "Factory New" },
@@ -52,11 +53,12 @@ async function processItems() {
 	try {
 		const start: number = Date.now();
 		let priceData: SkinPrice[];
+		let skinsData: SkinInfo[];
+
 		if (fetch_web) priceData = await saveUrlToJSON(priceUrl, pricePath);
 		priceData = await readJSON(pricePath);
 		console.log("Price read");
 
-		let skinsData: SkinInfo[];
 		if (fetch_web) skinsData = await saveUrlToJSON(infoUrl, infoPath);
 		skinsData = await readJSON(infoPath);
 		console.log("Info read");
@@ -359,23 +361,6 @@ function insertPriceInfo(collections: Collection[], priceData: GroupedRaritiesPr
 
 //tradeup logic
 
-type TradeupResult = {
-	max_required_float: number;
-	collection: string;
-	rarity: string | null;
-	availability: string;
-	input: SkinInfo;
-};
-
-interface Tradeup {
-	availability: number;
-	collection: string;
-	rarity: string;
-	max_required_float: number;
-	input: SkinInfo;
-	outcomes: SkinInfo[];
-}
-
 function calculateTradeupRequirements(
 	collections: Collection[]
 ): { max_required_float: number; collection: string; rarity: string | null }[] {
@@ -431,8 +416,8 @@ function calculateTradeupRequirements(
 function findCheapestItem(
 	tradeups: { collection: string; rarity: string; max_required_float: number }[],
 	groupedItems: Collection[]
-): (TradeupResult | null)[] {
-	const bestTradeupItems: (TradeupResult | null)[] = tradeups.map((tradeup) => {
+): (Tradeup | null)[] {
+	const bestTradeupItems: (Tradeup | null)[] = tradeups.map((tradeup) => {
 		const { collection, rarity, max_required_float } = tradeup;
 
 		const matchingCollection = groupedItems.find((col) => col.collectionName === collection);
@@ -464,17 +449,19 @@ function findCheapestItem(
 		const rangeScarcity = rangeDictionary.find(
 			(range) => max_required_float_correct > range.min && max_required_float_correct <= range.max
 		);
-		const floatScarcity = (100 * (max_required_float_correct - (rangeScarcity?.min ?? 0))) / (rangeScarcity?.max ?? 1);
+		const floatScarcity: number =
+			(100 * (max_required_float_correct - (rangeScarcity?.min ?? 0))) / (rangeScarcity?.max ?? 1);
 
 		return {
 			...tradeup,
 			max_required_float: max_required_float_correct,
-			availability: floatScarcity.toFixed(1),
+			availability: Math.trunc(floatScarcity * 10) / 10, //round to 1 place after decimal
 			input: cheapestItem,
+			outcomes: null,
 		};
 	});
 
-	const uniqueItems: TradeupResult[] = [];
+	const uniqueItems: Tradeup[] = [];
 	const seenHashes = new Set<string>();
 
 	bestTradeupItems.forEach((item) => {
@@ -533,7 +520,7 @@ function calculateTradeupOutcomes(tradeups: Tradeup[], groupedItems: Collection[
 function calculateExpectedValue(tradeups: Tradeup[]) {
 	return tradeups.map((tradeup) => {
 		const profitBruto =
-			tradeup.outcomes.reduce((sum, outcome) => sum + outcome.prices[price_type], 0) / tradeup.outcomes.length;
+			tradeup.outcomes!.reduce((sum, outcome) => sum + outcome.prices[price_type], 0) / tradeup.outcomes!.length;
 		const expectedValue = 10 * -tradeup.input.prices[price_type] + profitBruto * (1 - fee * 0.01);
 
 		const input: FinalItem = {
@@ -550,7 +537,7 @@ function calculateExpectedValue(tradeups: Tradeup[]) {
 			output_float: -1,
 		};
 
-		const outcomes = tradeup.outcomes.map((outcome) => {
+		const outcomes = tradeup.outcomes!.map((outcome) => {
 			return {
 				name: outcome.name,
 				min_float: outcome.min_float,

@@ -140,3 +140,12 @@ export interface FinalItem {
 	unstable: SkinPrice["unstable"];
 	output_float: number;
 }
+
+export interface Tradeup {
+	availability: number;
+	collection: string;
+	rarity: string;
+	max_required_float: number;
+	input: SkinInfo;
+	outcomes: SkinInfo[] | null;
+}
