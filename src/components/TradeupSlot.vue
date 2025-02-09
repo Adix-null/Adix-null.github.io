@@ -50,6 +50,7 @@ defineProps<{
     flex-direction: row;
     height: 100px;
     align-items: center;
+    padding: 0em 2em;
 }
 
 .container>* {
