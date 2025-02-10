@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, type Ref } from 'vue';
-//import HelloWorld from './components/HelloWorld.vue';
+import { onMounted, ref } from 'vue';
 import TradeupSlot from './components/TradeupSlot.vue';
 import Navbar from './components/Navbar.vue';
 import Footer_info from './components/Footer.vue'
@@ -9,26 +8,10 @@ import SliderRange from './components/SliderRange.vue';
 
 import type { Tradeup } from '../tradeuptracker/types.ts';
 
-// const name = ref("test");
-// const status = ref(1);
-// const mydata: Ref<string[], string[]> = ref(["ff", ":DD"]);
-// const linkas = ref("https://wikipedia.org");
-// const newTask = ref('Search');
 let tradeups: Tradeup[];
 
-const range = ref<[number, number]>([0, 100]);
-
-
-// const addTask = () => {
-//   if (newTask.value !== '') {
-//     mydata.value.push(newTask.value);
-//     newTask.value = '';
-//   }
-// }
-
-// const myevent = () => {
-//   status.value = (status.value + 1) % 3
-// }
+const sliderMin = ref(0);
+const sliderMax = ref(1);
 
 onMounted(async () => {
   const response = await fetch('../tradeuptracker/tradeuptest.json');
@@ -36,35 +19,11 @@ onMounted(async () => {
   tradeups = tradeups.slice(0, 20);
 });
 
+const dropdownOptions = ref<string[]>(['Option 1', 'Option 2', 'Option 3', 'Option 3', 'Option 3', 'Option 3', 'Option 3', 'Option 3', 'Option 3', 'Option 3', 'Option 3', 'Option 3']);
+
 </script>
-<!--https://www.youtube.com/watch?v=VeNfHj6MhgA&t=3900s 1:05:00 -->
+
 <template>
-
-  <!-- <h1>{{ name }}</h1>
-  <p v-if="status">okej</p>
-  <p v-else>nyet</p>
-
-  <form @submit.prevent="addTask">
-    <label for="newTask">Add smth</label>
-    <br />
-    <input type="text" id="search" name="newTask" v-model="newTask">
-    <button type="submit">Search the db</button>
-  </form>
-
-  <h2>Poshliy pojechali OwO</h2>
-  <a v-for="dat in mydata" :key="dat">{{ dat }}
-    <hr />
-  </a>
-  <a :href="linkas">gein nooledž</a>
-
-  <br />
-
-  <button @click="myevent">Do something idk</button>
-
-  <HelloWorld msg="amog" /> -->
-
-  <!-- <SliderRange v-model="range" :min="0" :max="100" :step="1" /> -->
-
   <Navbar id="navbar" />
 
   <div id="main">
@@ -77,13 +36,18 @@ onMounted(async () => {
       </form>
 
       <label>Float needed</label>
-      <SliderRange />
+      <SliderRange :min="0" :max="1" :step="0.001" v-model:min-value="sliderMin" v-model:max-value="sliderMax" />
+
 
       <label>Collection</label>
-      <Dropdown />
+      <Dropdown :options="dropdownOptions" />
 
       <label>Rarity</label>
       <div id="search_rarities">
+        <div>
+          <input type="radio" id="Any" name="rarity" />
+          <label for="Any">Any</label>
+        </div>
         <div>
           <input type="radio" id="Classified" name="rarity" />
           <label for="Classified">Classified</label>
@@ -104,29 +68,30 @@ onMounted(async () => {
           <input type="radio" id="Consumer Grade" name="rarity" />
           <label for="Consumer Grade">Consumer Grade</label>
         </div>
+
       </div>
 
       <br />
       <div id="search_price">
         <label>Price</label>
-        <Dropdown />
+        <Dropdown :options="dropdownOptions" />
       </div>
-      <SliderRange />
+      <SliderRange :min="0" :max="1" :step="0.001" v-model:min-value="sliderMin" v-model:max-value="sliderMax" />
 
       <div id="profit_search">
         <label>Profit</label>
         <input type="checkbox" id="checkbox">Percent</input>
       </div>
-      <SliderRange />
+      <SliderRange :min="0" :max="1" :step="0.001" v-model:min-value="sliderMin" v-model:max-value="sliderMax" />
 
       <label>Profit Chance</label>
-      <SliderRange />
+      <SliderRange :min="0" :max="1" :step="0.001" v-model:min-value="sliderMin" v-model:max-value="sliderMax" />
 
       <label>Availability</label>
-      <SliderRange />
+      <SliderRange :min="0" :max="1" :step="0.001" v-model:min-value="sliderMin" v-model:max-value="sliderMax" />
 
       <label>Liquidity</label>
-      <SliderRange />
+      <SliderRange :min="0" :max="1" :step="0.001" v-model:min-value="sliderMin" v-model:max-value="sliderMax" />
     </div>
 
 
@@ -153,7 +118,7 @@ onMounted(async () => {
           <button>▼</button>
         </div>
         <div class="field">
-          <p>Float needed</p>
+          <p>Float</p>
           <button>▼</button>
         </div>
         <div class="field">
@@ -165,13 +130,25 @@ onMounted(async () => {
           <button>▼</button>
         </div>
 
+
+
       </div>
       <div id="item-list">
         <TradeupSlot
           imgSrc="
         https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpoo6m1FBRp3_bGcjhQ09-jq5WYh8jkIbLfgnhF-sBwh9bN_Iv9nBrj-BE-Nz2iJoXBJFJtYFzY_1e9yO-51pK-7prInHdl7yEi5niJzUawn1gSOR_ZgPWk"
-          name="Axujenas skinas (lauke testuotas)" price="4$" profit="-0.2$" max_float={{max_required_float}}
-          availability="37%" output_count="3" volume_24h="73" />
+          name="Dual Berettas | Sweet Little Angels (Battle-Scarred)" output_count="3" price="4$" profit="-0.2$"
+          profit_chance="33%" max_float=0.08625 availability="37%" volume_24h="73" />
+        <TradeupSlot
+          imgSrc="
+        https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpot621FAZx7PLfYQJW-9W4kb-GkvP9JrafkDMB7JYi2byRotik2gPs_0Y_a27ycIKcdwA2YVqG8wLvxO2705a5tYOJlyVepNPmuQ"
+          name="AWP | PAW (Factory New)" output_count="3" price="4$" profit="-0.2$" profit_chance="33%"
+          max_float=0.08625 availability="37%" volume_24h="73" />
+        <TradeupSlot
+          imgSrc="
+        https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpoo6m1FBRp3_bGcjhQ09-jq5WYh8jkIbLfgnhF-sBwh9bN_Iv9nBrj-BE-Nz2iJoXBJFJtYFzY_1e9yO-51pK-7prInHdl7yEi5niJzUawn1gSOR_ZgPWk"
+          name="Galil | Cold fusion (Field-Tested)" output_count="3" price="4$" profit="-0.2$" profit_chance="33%"
+          max_float=0.08625 availability="37%" volume_24h="73" />
         <!-- <div v-for="(max_required_float, collection, name) in tradeups" :key="name"> {{ name }}
         </div> -->
 
@@ -185,6 +162,13 @@ onMounted(async () => {
 </template>
 
 <style scoped>
+#main {
+  display: flex;
+  flex-direction: row;
+  width: 80%;
+  padding: 1em 0em 3em 0em
+}
+
 #filter {
   min-width: fit-content;
   height: 100%;
@@ -212,34 +196,52 @@ onMounted(async () => {
   margin-right: 1em;
 }
 
+
 #item-view {
   width: 100%;
+  min-width: 500px;
+  flex-grow: 0;
+  display: block;
+  grid-auto-rows: min-content;
+  padding-left: 1em;
 }
 
 #item-table-labels {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
+  display: grid;
   border-bottom: 2px solid white;
 }
 
-.field {
-  margin: 15px;
+#item-table-labels,
+#item-list {
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
 }
 
-.field>* {
-  display: inline;
+.field {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .field>p {
   margin-right: 0.5em;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
+.field>button {
+  height: auto;
+}
 
-#main {
-  display: flex;
-  flex-direction: row;
-  height: 100%;
+#item-list {
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+
+#item-list>* {
+  display: contents;
 }
 
 #footer {

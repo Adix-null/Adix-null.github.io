@@ -1,6 +1,9 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import logo from '../assets/tradeuptracker.svg';
 import Dropdown from './Dropdown.vue';
+
+const dropdownOptions = ref<string[]>(['USD', 'EUR', 'CNY']);
 </script>
 
 <template>
@@ -18,8 +21,8 @@ import Dropdown from './Dropdown.vue';
                 Login with Steam
             </a>
         </div>
-        <div id="currency" class="clickable">
-            <Dropdown />
+        <div id="currency">
+            <Dropdown :options="dropdownOptions" />
         </div>
     </div>
 </template>
@@ -38,7 +41,7 @@ h2 {
 }
 
 #currency {
-    margin-left: 20px
+    margin: 0px 20px
 }
 
 #links-container {
