@@ -29,68 +29,49 @@ const dropdownOptions = ref<string[]>(['Option 1', 'Option 2', 'Option 3', 'Opti
   <div id="main">
     <div id="filter">
       <form>
-        <label for="newTask">Item Name</label>
+        <label class="category" for="search_name">Item Name</label>
         <br />
-        <input type="text" id="search_name" name="newTask">
-        <input type="checkbox" id="checkbox">StatTrak™</input>
+        <input type="text" id="search_name" name="search_name">
+        <input type="checkbox" id="stattrak_cb">StatTrak™</input>
       </form>
 
-      <label>Float needed</label>
+      <label class="category">Float needed</label>
       <SliderRange :min="0" :max="1" :step="0.001" v-model:min-value="sliderMin" v-model:max-value="sliderMax" />
 
 
-      <label>Collection</label>
+      <label class="category">Collection</label>
       <Dropdown :options="dropdownOptions" />
 
-      <label>Rarity</label>
+      <label class="category">Rarity</label>
       <div id="search_rarities">
-        <div>
-          <input type="radio" id="Any" name="rarity" />
-          <label for="Any">Any</label>
-        </div>
-        <div>
-          <input type="radio" id="Classified" name="rarity" />
-          <label for="Classified">Classified</label>
-        </div>
-        <div>
-          <input type="radio" id="Restricted" name="rarity" />
-          <label for="Restricted">Restricted</label>
-        </div>
-        <div>
-          <input type="radio" id="Mil-Spec Grade" name="rarity" />
-          <label for="Mil-Spec Grade">Mil-Spec Grade</label>
-        </div>
-        <div>
-          <input type="radio" id="Industrial Grade" name="rarity" />
-          <label for="Industrial Grade">Industrial Grade</label>
-        </div>
-        <div>
-          <input type="radio" id="Consumer Grade" name="rarity" />
-          <label for="Consumer Grade">Consumer Grade</label>
-        </div>
-
+        <div><input type="checkbox" id="Any">Any</input></div>
+        <div><input type="checkbox" id="Classified">Classified</input></div>
+        <div><input type="checkbox" id="Restricted">Restricted</input></div>
+        <div><input type="checkbox" id="">Mil-Spec Grade</input></div>
+        <div><input type="checkbox" id="">Industrial Grade</input></div>
+        <div><input type="checkbox" id="">Consumer Grade</input></div>
       </div>
 
       <br />
-      <div id="search_price">
+      <div id="search_price" class="category">
         <label>Price</label>
         <Dropdown :options="dropdownOptions" />
       </div>
       <SliderRange :min="0" :max="1" :step="0.001" v-model:min-value="sliderMin" v-model:max-value="sliderMax" />
 
-      <div id="profit_search">
+      <div id="profit_search" class="category">
         <label>Profit</label>
-        <input type="checkbox" id="checkbox">Percent</input>
+        <input type="checkbox" id="checkbox_pc">Percent</input>
       </div>
       <SliderRange :min="0" :max="1" :step="0.001" v-model:min-value="sliderMin" v-model:max-value="sliderMax" />
 
-      <label>Profit Chance</label>
+      <label class="category">Profit Chance</label>
       <SliderRange :min="0" :max="1" :step="0.001" v-model:min-value="sliderMin" v-model:max-value="sliderMax" />
 
-      <label>Availability</label>
+      <label class="category">Availability</label>
       <SliderRange :min="0" :max="1" :step="0.001" v-model:min-value="sliderMin" v-model:max-value="sliderMax" />
 
-      <label>Liquidity</label>
+      <label class="category">Liquidity</label>
       <SliderRange :min="0" :max="1" :step="0.001" v-model:min-value="sliderMin" v-model:max-value="sliderMax" />
     </div>
 
@@ -129,8 +110,6 @@ const dropdownOptions = ref<string[]>(['Option 1', 'Option 2', 'Option 3', 'Opti
           <p>Liquidity</p>
           <button>▼</button>
         </div>
-
-
 
       </div>
       <div id="item-list">
@@ -180,12 +159,28 @@ const dropdownOptions = ref<string[]>(['Option 1', 'Option 2', 'Option 3', 'Opti
   border-right: 2px solid white;
 }
 
-#checkbox {
+.category {
+  font-size: 1.5em;
+  margin-top: 0.5em;
+}
+
+input[type=checkbox] {
+  /* doesnt work for some reason */
+  font-size: 2em !important;
+  margin-left: 0.5em;
+}
+
+#checkbox_cb {
   margin-left: 1em;
 }
 
 #search_rarities {
-  margin-top: 1em;
+  display: flex;
+  flex-direction: column;
+}
+
+#search_rarities>* {
+  display: inline;
 }
 
 #search_price>* {
@@ -193,7 +188,7 @@ const dropdownOptions = ref<string[]>(['Option 1', 'Option 2', 'Option 3', 'Opti
 }
 
 #search_price>label {
-  margin-right: 1em;
+  margin-right: 0.5em;
 }
 
 

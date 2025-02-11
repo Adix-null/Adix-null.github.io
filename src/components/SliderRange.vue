@@ -1,91 +1,86 @@
 <!-- source is https://github.com/miracleonyenma/custom-vue-range-slider -->
 
-<script setup>
-import { computed, ref, watchEffect } from "vue";
+<script setup lang="ts">
+import { ref, computed, watchEffect } from "vue";
 
-// define component props for the slider component
-const { min, max, step, minValue, maxValue } = defineProps({
-    min: {
-        type: Number,
-        default: 0,
-    },
-    max: {
-        type: Number,
-        default: 100,
-    },
-    step: {
-        type: Number,
-        default: 1,
-    },
-    minValue: {
-        type: Number,
-        default: 50,
-    },
-    maxValue: {
-        type: Number,
-        default: 80,
-    },
-});
+// Define component props with proper TypeScript types
+const props = defineProps<{
+    min?: number;
+    max?: number;
+    step?: number;
+    minValue?: number;
+    maxValue?: number;
+}>();
 
-// define emits for the slider component
-const emit = defineEmits(["update:minValue", "update:maxValue"]);
+// Default values for props (Vue does not apply defaults in setup(), so we handle it manually)
+const min = props.min ?? 0;
+const max = props.max ?? 100;
+const step = props.step ?? 1;
+const sliderMinValue = ref(props.minValue ?? 50);
+const sliderMaxValue = ref(props.maxValue ?? 80);
 
-// define refs for the slider element and the slider values
-const slider = ref(null);
-const inputMin = ref(null);
-const inputMax = ref(null);
-const sliderMinValue = ref(minValue);
-const sliderMaxValue = ref(maxValue);
+// Define emits for the slider component
+const emit = defineEmits<{
+    (event: "update:minValue", value: number): void;
+    (event: "update:maxValue", value: number): void;
+}>();
 
-// function to get the percentage of a value between the min and max values
-const getPercent = (value, min, max) => {
+// Define refs for the slider element and inputs
+const slider = ref<HTMLElement | null>(null);
+const inputMin = ref<HTMLInputElement | null>(null);
+const inputMax = ref<HTMLInputElement | null>(null);
+
+// Function to get the percentage of a value between min and max
+const getPercent = (value: number, min: number, max: number): number => {
     return ((value - min) / (max - min)) * 100;
 };
 
-// function to get the difference between the min and max values
-const sliderDifference = computed(() => {
-    return Math.abs(sliderMaxValue.value - sliderMinValue.value);
-});
-
-// function to set the css variables for width, left and right
-const setCSSProps = (left, right) => {
-    slider.value.style.setProperty("--progressLeft", `${left}%`);
-    slider.value.style.setProperty("--progressRight", `${right}%`);
+// Function to set CSS variables for width, left, and right positioning
+const setCSSProps = (left: number, right: number) => {
+    if (slider.value) {
+        slider.value.style.setProperty("--progressLeft", `${left}%`);
+        slider.value.style.setProperty("--progressRight", `${right}%`);
+    }
 };
 
-// watchEffect to emit the updated values, and update the css variables
-// when the slider values change
+// Watch effect to update emitted values and CSS variables when slider values change
 watchEffect(() => {
     if (slider.value) {
-        // emit slidet values when updated
+        // Emit updated values
         emit("update:minValue", sliderMinValue.value);
         emit("update:maxValue", sliderMaxValue.value);
 
-        // calculate values in percentages
+        // Calculate percentages
         const leftPercent = getPercent(sliderMinValue.value, min, max);
         const rightPercent = 100 - getPercent(sliderMaxValue.value, min, max);
 
-        // set the CSS variables
+        // Set CSS variables
         setCSSProps(leftPercent, rightPercent);
     }
 });
 
-// validation sliderMinValue do not greater than sliderMaxValue and opposite
-const onInput = ({ target }) => {
-    if (target.name === 'min') {
-        target.value > sliderMaxValue.value
-            ? target.value = sliderMaxValue.value
-            : sliderMinValue.value = parseFloat(target.value);
+// Validation to ensure min value is not greater than max and vice versa
+const onInput = (event: Event) => {
+    const target = event.target as HTMLInputElement;
+
+    if (target.name === "min") {
+        if (parseFloat(target.value) > sliderMaxValue.value) {
+            target.value = sliderMaxValue.value.toString();
+        } else {
+            sliderMinValue.value = parseFloat(target.value);
+        }
     }
 
-    if (target.name === 'max') {
-        target.value < sliderMinValue.value
-            ? target.value = sliderMinValue.value
-            : sliderMaxValue.value = parseFloat(target.value);
+    if (target.name === "max") {
+        if (parseFloat(target.value) < sliderMinValue.value) {
+            target.value = sliderMinValue.value.toString();
+        } else {
+            sliderMaxValue.value = parseFloat(target.value);
+        }
     }
 };
-
 </script>
+
 <template>
     <div class="container">
         <div ref="slider" class="custom-slider minmax">
@@ -214,7 +209,7 @@ a,
     background: #00865a;
     height: 100%;
     left: var(--progressLeft);
-    right: var(--progressRight);
+    right: calc(var(--progressRight) - var(--thumbRadius));
 }
 
 .custom-slider.minmax input[type="range"] {
