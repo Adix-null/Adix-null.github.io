@@ -1,7 +1,8 @@
 <!-- source is https://github.com/miracleonyenma/custom-vue-range-slider -->
 
 <script setup lang="ts">
-import { ref, computed, watchEffect } from "vue";
+import { ref, watchEffect } from "vue";
+import '../style.css';
 
 // Define component props with proper TypeScript types
 const props = defineProps<{
@@ -105,7 +106,7 @@ const onInput = (event: Event) => {
 a,
 .green {
     text-decoration: none;
-    color: #00bd7e;
+    color: var(--slider-main);
     transition: 0.4s;
 }
 
@@ -138,14 +139,14 @@ a,
     position: absolute;
     width: var(--ProgressPercent, 100%);
     height: 100%;
-    background: #00865a;
+    background: var(--slider-main);
     border-radius: 999px;
 }
 
 /* `::-webkit-slider-runnable-track` targets the track (background) of a range slider in chrome and safari browsers. */
 .custom-slider input[type="range"]::-webkit-slider-runnable-track {
     appearance: none;
-    background: #005a3c;
+    background: var(--slider-background);
     height: var(--trackHeight);
     border-radius: 999px;
 }
@@ -155,8 +156,8 @@ a,
     width: var(--thumbRadius);
     height: var(--thumbRadius);
     margin-top: calc((var(--trackHeight) - var(--thumbRadius)) / 2);
-    background: #005a3c;
-    border: 1px solid #00865a;
+    background: var(--slider-main);
+    border: 1px solid var(--slider-main);
     border-radius: 999px;
     pointer-events: all;
     appearance: none;
@@ -166,7 +167,7 @@ a,
 /* `::-moz-range-track` targets the track (background) of a range slider in Mozilla Firefox. */
 .custom-slider.default input[type="range"]::-moz-range-track {
     appearance: none;
-    background: #005a3c;
+    background: var(--slider-background);
     height: var(--trackHeight);
     border-radius: 999px;
 }
@@ -177,8 +178,8 @@ a,
     width: var(--thumbRadius);
     height: var(--thumbRadius);
     margin-top: calc((var(--trackHeight) - var(--thumbRadius)) / 2);
-    background: #005a3c;
-    border: 1px solid #00865a;
+    background: var(--slider-main);
+    border: 1px solid var(--slider-main);
     border-radius: 999px;
     pointer-events: all;
     appearance: none;
@@ -188,7 +189,7 @@ a,
 .custom-slider.minmax {
     position: relative;
     height: var(--trackHeight);
-    background: #005a3c;
+    background: var(--slider-background);
     border-radius: 999px;
     margin: 0.5rem 0;
     --progressLeft: 0%;
@@ -206,7 +207,7 @@ a,
 .custom-slider .minmax-indicator::before {
     content: "";
     position: absolute;
-    background: #00865a;
+    background: var(--slider-main);
     height: 100%;
     left: var(--progressLeft);
     right: calc(var(--progressRight) - var(--thumbRadius));
@@ -235,6 +236,7 @@ a,
 }
 
 .minmax-inputs input {
-    width: 50px;
+    width: 60px;
+    margin-top: 5px;
 }
 </style>

@@ -10,8 +10,19 @@ import type { Tradeup } from '../tradeuptracker/types.ts';
 
 let tradeups: Tradeup[];
 
-const sliderMin = ref(0);
-const sliderMax = ref(1);
+const floatSliderMin = ref(0);
+const floatSliderMax = ref(1);
+const priceSliderMin = ref(0);
+const priceSliderMax = ref(100);
+const profitSliderMin = ref(0);
+const profitSliderMax = ref(100);
+const chanceSliderMin = ref(0);
+const chanceSliderMax = ref(100);
+const availabilitySliderMin = ref(0);
+const availabilitySliderMax = ref(100);
+const liquiditySliderMin = ref(0);
+const liquiditySliderMax = ref(100);
+
 
 onMounted(async () => {
   const response = await fetch('../tradeuptracker/tradeuptest.json');
@@ -19,7 +30,8 @@ onMounted(async () => {
   tradeups = tradeups.slice(0, 20);
 });
 
-const dropdownOptions = ref<string[]>(['Option 1', 'Option 2', 'Option 3', 'Option 3', 'Option 3', 'Option 3', 'Option 3', 'Option 3', 'Option 3', 'Option 3', 'Option 3', 'Option 3']);
+const collectionOptions = ref<string[]>(['The eSports Summer 2014 collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection']);
+const priceOptions = ref<string[]>(['latest', 'average', 'median'])
 
 </script>
 
@@ -28,58 +40,73 @@ const dropdownOptions = ref<string[]>(['Option 1', 'Option 2', 'Option 3', 'Opti
 
   <div id="main">
     <div id="filter">
-      <form>
-        <label class="category" for="search_name">Item Name</label>
+      <form class="category">
+        <label for="search_name">Item Name</label>
         <br />
         <input type="text" id="search_name" name="search_name">
         <input type="checkbox" id="stattrak_cb">StatTrak™</input>
       </form>
 
-      <label class="category">Float needed</label>
-      <SliderRange :min="0" :max="1" :step="0.001" v-model:min-value="sliderMin" v-model:max-value="sliderMax" />
+      <div class="category">
+        <label>Float needed</label>
+        <SliderRange :min="0" :max="1" :step="0.001" v-model:min-value="floatSliderMin"
+          v-model:max-value="floatSliderMax" />
+      </div>
 
+      <div class="category">
+        <label>Collection</label>
+        <Dropdown :options="collectionOptions" />
+      </div>
 
-      <label class="category">Collection</label>
-      <Dropdown :options="dropdownOptions" />
-
-      <label class="category">Rarity</label>
-      <div id="search_rarities">
+      <div id="search_rarities" class="category">
+        <label>Rarity</label>
         <div><input type="checkbox" id="Any">Any</input></div>
         <div><input type="checkbox" id="Classified">Classified</input></div>
         <div><input type="checkbox" id="Restricted">Restricted</input></div>
-        <div><input type="checkbox" id="">Mil-Spec Grade</input></div>
-        <div><input type="checkbox" id="">Industrial Grade</input></div>
-        <div><input type="checkbox" id="">Consumer Grade</input></div>
+        <div><input type="checkbox" id="Mil-Spec Grade">Mil-Spec Grade</input></div>
+        <div><input type="checkbox" id="Industrial Grade">Industrial Grade</input></div>
+        <div><input type="checkbox" id="Consumer Grade">Consumer Grade</input></div>
       </div>
 
       <br />
       <div id="search_price" class="category">
         <label>Price</label>
-        <Dropdown :options="dropdownOptions" />
+        <Dropdown :options="priceOptions" />
+        <SliderRange :min="0" :max="100" :step="0.01" v-model:min-value="priceSliderMin"
+          v-model:max-value="priceSliderMax" />
       </div>
-      <SliderRange :min="0" :max="1" :step="0.001" v-model:min-value="sliderMin" v-model:max-value="sliderMax" />
 
       <div id="profit_search" class="category">
         <label>Profit</label>
         <input type="checkbox" id="checkbox_pc">Percent</input>
+        <SliderRange :min="0" :max="100" :step="0.01" v-model:min-value="profitSliderMin"
+          v-model:max-value="profitSliderMax" />
       </div>
-      <SliderRange :min="0" :max="1" :step="0.001" v-model:min-value="sliderMin" v-model:max-value="sliderMax" />
 
-      <label class="category">Profit Chance</label>
-      <SliderRange :min="0" :max="1" :step="0.001" v-model:min-value="sliderMin" v-model:max-value="sliderMax" />
+      <div class="category">
+        <label>Profit Chance</label>
+        <SliderRange :min="0" :max="100" :step="1" v-model:min-value="chanceSliderMin"
+          v-model:max-value="chanceSliderMax" />
+      </div>
 
-      <label class="category">Availability</label>
-      <SliderRange :min="0" :max="1" :step="0.001" v-model:min-value="sliderMin" v-model:max-value="sliderMax" />
+      <div class="category">
+        <label>Availability</label>
+        <SliderRange :min="0" :max="100" :step="0.1" v-model:min-value="availabilitySliderMin"
+          v-model:max-value="availabilitySliderMax" />
+      </div>
 
-      <label class="category">Liquidity</label>
-      <SliderRange :min="0" :max="1" :step="0.001" v-model:min-value="sliderMin" v-model:max-value="sliderMax" />
+      <div class="category">
+        <label>Liquidity</label>
+        <SliderRange :min="0" :max="100" :step="1" v-model:min-value="liquiditySliderMin"
+          v-model:max-value="liquiditySliderMax" />
+      </div>
     </div>
 
 
     <div id="item-view">
       <div id="item-table-labels">
         <div class="field">
-          <p>Name</p>
+          <p>Item Info</p>
           <button>▼</button>
         </div>
         <div class="field">
@@ -128,8 +155,9 @@ const dropdownOptions = ref<string[]>(['Option 1', 'Option 2', 'Option 3', 'Opti
         https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpoo6m1FBRp3_bGcjhQ09-jq5WYh8jkIbLfgnhF-sBwh9bN_Iv9nBrj-BE-Nz2iJoXBJFJtYFzY_1e9yO-51pK-7prInHdl7yEi5niJzUawn1gSOR_ZgPWk"
           name="Galil | Cold fusion (Field-Tested)" output_count="3" price="4$" profit="-0.2$" profit_chance="33%"
           max_float=0.08625 availability="37%" volume_24h="73" />
-        <!-- <div v-for="(max_required_float, collection, name) in tradeups" :key="name"> {{ name }}
-        </div> -->
+        <div v-for="(max_required_float, collection, name) in tradeups" :key="name">
+          <TradeupSlot name=name />
+        </div>
 
       </div>
     </div>
@@ -156,18 +184,20 @@ const dropdownOptions = ref<string[]>(['Option 1', 'Option 2', 'Option 3', 'Opti
   flex-direction: column;
   align-items: start;
   text-align: left;
-  border-right: 2px solid white;
+  border-right: 2px solid var(--text-color-main);
 }
 
 .category {
+  margin-top: 1.5em;
+  width: 100%;
+}
+
+.category>label {
   font-size: 1.5em;
-  margin-top: 0.5em;
 }
 
 input[type=checkbox] {
-  /* doesnt work for some reason */
-  font-size: 2em !important;
-  margin-left: 0.5em;
+  margin-left: 1em;
 }
 
 #checkbox_cb {
@@ -194,7 +224,7 @@ input[type=checkbox] {
 
 #item-view {
   width: 100%;
-  min-width: 500px;
+  min-width: 750px;
   flex-grow: 0;
   display: block;
   grid-auto-rows: min-content;
@@ -204,11 +234,12 @@ input[type=checkbox] {
 #item-table-labels {
   display: grid;
   border-bottom: 2px solid white;
+  font-size: 0.85em;
 }
 
 #item-table-labels,
 #item-list {
-  grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 3fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
 }
 
 .field {

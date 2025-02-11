@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, defineProps } from 'vue';
+import { defineProps } from 'vue';
+import '../style.css';
 
 defineProps<{
     imgSrc: string,
@@ -51,12 +52,10 @@ defineProps<{
 </template>
 
 <style scoped>
-.container {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    padding: 0em 2em;
+.container>* {
+    border-bottom: 1px solid var(--text-color-main);
 }
+
 
 .container * {
     overflow: clip;
@@ -65,11 +64,22 @@ defineProps<{
     text-align: center;
 }
 
+p {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
 #pic_name {
     display: flex;
     flex-direction: row;
     justify-self: start;
+    width: 100%;
+}
+
+#pic_name>p {
     text-align: start;
+
 }
 
 #pic_name>img {

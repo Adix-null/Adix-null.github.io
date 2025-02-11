@@ -23,7 +23,7 @@ const selectOption = (option: string) => {
 </script>
 
 <template>
-    <div class="dropdown" @click="toggleDropdown">
+    <div class="container" @click="toggleDropdown">
         <button class="dropdown-button">{{ selectedOption || 'Select Option' }}</button>
         <ul v-if="isDropdownOpen" class="dropdown-list">
             <li v-for="option in options" :key="option" @click="selectOption(option)" class="dropdown-item">
@@ -34,10 +34,11 @@ const selectOption = (option: string) => {
 </template>
 
 <style scoped>
-.dropdown {
+.container {
     position: relative;
-    border: 1px solid white;
+    border: 1px solid var(--text-color-main);
     background-color: var(--background-color-main);
+    min-width: 100%;
 }
 
 .dropdown-button {
@@ -55,7 +56,8 @@ const selectOption = (option: string) => {
     margin: 0;
     z-index: 1;
     list-style: none;
-    border: 1px solid white;
+    text-align: start;
+    border: 1px solid var(--text-color-main);
     max-height: 350px;
     overflow-y: auto;
     background-color: var(--background-color-main);
