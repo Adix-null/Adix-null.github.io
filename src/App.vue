@@ -28,6 +28,7 @@ onMounted(async () => {
   const response = await fetch('../tradeuptracker/tradeuptest.json');
   tradeups = await response.json();
   tradeups = tradeups.slice(0, 20);
+  console.log(tradeups);
 });
 
 const collectionOptions = ref<string[]>(['The eSports Summer 2014 collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection']);
@@ -140,28 +141,13 @@ const priceOptions = ref<string[]>(['latest', 'average', 'median'])
 
       </div>
       <div id="item-list">
-        <TradeupSlot
-          imgSrc="
-        https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpoo6m1FBRp3_bGcjhQ09-jq5WYh8jkIbLfgnhF-sBwh9bN_Iv9nBrj-BE-Nz2iJoXBJFJtYFzY_1e9yO-51pK-7prInHdl7yEi5niJzUawn1gSOR_ZgPWk"
-          name="Dual Berettas | Sweet Little Angels (Battle-Scarred)" output_count="3" price="4$" profit="-0.2$"
-          profit_chance="33%" max_float=0.08625 availability="37%" volume_24h="73" />
-        <TradeupSlot
-          imgSrc="
-        https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpot621FAZx7PLfYQJW-9W4kb-GkvP9JrafkDMB7JYi2byRotik2gPs_0Y_a27ycIKcdwA2YVqG8wLvxO2705a5tYOJlyVepNPmuQ"
-          name="AWP | PAW (Factory New)" output_count="3" price="4$" profit="-0.2$" profit_chance="33%"
-          max_float=0.08625 availability="37%" volume_24h="73" />
-        <TradeupSlot
-          imgSrc="
-        https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpoo6m1FBRp3_bGcjhQ09-jq5WYh8jkIbLfgnhF-sBwh9bN_Iv9nBrj-BE-Nz2iJoXBJFJtYFzY_1e9yO-51pK-7prInHdl7yEi5niJzUawn1gSOR_ZgPWk"
-          name="Galil | Cold fusion (Field-Tested)" output_count="3" price="4$" profit="-0.2$" profit_chance="33%"
-          max_float=0.08625 availability="37%" volume_24h="73" />
-        <div v-for="(max_required_float, collection, name) in tradeups" :key="name">
-          <TradeupSlot name=name />
-        </div>
+        <TradeupSlot v-for="(tradeup, index) in tradeups" :key="index" :img_src="tradeup.input.image"
+          :name="tradeup.inputs[0].name" :price="tradeup.input.prices[0]" :profit="tradeup.expected_value"
+          :output_count="tradeup.outcomes!.length" :profit_chance="5050" :max_float="tradeup.max_required_float"
+          :availability="tradeup.availability" :volume_24h="0" />
 
       </div>
     </div>
-
   </div>
 
   <Footer_info id="footer" />

@@ -3,15 +3,15 @@ import { defineProps } from 'vue';
 import '../style.css';
 
 defineProps<{
-    imgSrc: string,
+    img_src: string,
     name: string,
-    price: string,
-    profit: string,
-    profit_chance: string,
-    max_float: string,
-    availability: string,
-    output_count: string,
-    volume_24h: string,
+    price: number,
+    profit: number,
+    profit_chance: number,
+    max_float: number,
+    availability: number,
+    output_count: number,
+    volume_24h: number,
 }>();
 
 </script>
