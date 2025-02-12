@@ -17,6 +17,10 @@ const RarityDictionary: Record<string, string> = {
     "Classified": "d32ce6",
     "Covert": "eb4b4b",
 }
+const stattrakColor = "#cf6a32";
+const nameColor = computed(() =>
+    props.tradeup.inputs[0].stattrak ? stattrakColor : "initial"
+);
 
 const gradient = computed(() =>
     `linear-gradient(90deg, #${RarityDictionary[props.tradeup.rarity]}dd, #00000000)`
@@ -28,9 +32,11 @@ const gradient = computed(() =>
 <template>
     <div class="container">
         <div id="pic_name">
-            <img :src="tradeup.inputs[0].image" :style="{ background: gradient }" />
+            <a :href="tradeup.inputs[0].steamurl" target="_blank">
+                <img :src="tradeup.inputs[0].image" :style="{ background: gradient }" />
+            </a>
             <!-- Longest possible name - Dual Berettas | Sweet Little Angels (Battle-Scarred), 52 chars -->
-            <p id="name">
+            <p id="name" :style="{ color: nameColor }">
                 {{ tradeup.inputs[0].name }}
             </p>
         </div>
@@ -41,7 +47,7 @@ const gradient = computed(() =>
             {{ tradeup.inputs[0].prices[selectedPrice] }}
         </p>
         <p id="profit">
-            {{ tradeup.expected_value!.toFixed(2) }}
+            {{ tradeup.expected_value!.toFixed(2) }}$
         </p>
         <p id="profit_chance">
             {{ tradeup.profit_chance!.toFixed(0) }}%
@@ -85,9 +91,9 @@ p {
     width: 100%;
 }
 
-#pic_name>p {
+#name {
     text-align: start;
-
+    margin-left: 0.5em;
 }
 
 #pic_name>img {

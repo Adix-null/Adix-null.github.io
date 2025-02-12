@@ -124,7 +124,6 @@ const priceOptions = ref<string[]>(['latest', 'average', 'median'])
         <div class="field">
           <p>Profit</p>
           <button>▼</button>
-
         </div>
         <div class="field">
           <p>Profit chance</p>
