@@ -23,6 +23,8 @@ const availabilitySliderMax = ref(100);
 const liquiditySliderMin = ref(0);
 const liquiditySliderMax = ref(100);
 
+const selectedPriceOption = "pricelatest";
+
 
 onMounted(async () => {
   const response = await fetch('../tradeuptracker/tradeuptest.json');
@@ -104,6 +106,7 @@ const priceOptions = ref<string[]>(['latest', 'average', 'median'])
     </div>
 
 
+
     <div id="item-view">
       <div id="item-table-labels">
         <div class="field">
@@ -121,6 +124,7 @@ const priceOptions = ref<string[]>(['latest', 'average', 'median'])
         <div class="field">
           <p>Profit</p>
           <button>▼</button>
+
         </div>
         <div class="field">
           <p>Profit chance</p>
@@ -141,11 +145,8 @@ const priceOptions = ref<string[]>(['latest', 'average', 'median'])
 
       </div>
       <div id="item-list">
-        <TradeupSlot v-for="(tradeup, index) in tradeups" :key="index" :img_src="tradeup.input.image"
-          :name="tradeup.inputs[0].name" :price="tradeup.input.prices[0]" :profit="tradeup.expected_value"
-          :output_count="tradeup.outcomes!.length" :profit_chance="5050" :max_float="tradeup.max_required_float"
-          :availability="tradeup.availability" :volume_24h="0" />
-
+        <TradeupSlot v-for="(tradeup, index) in tradeups" :key="index" :tradeup="tradeup"
+          :selectedPrice="selectedPriceOption" />
       </div>
     </div>
   </div>

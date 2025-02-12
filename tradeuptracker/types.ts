@@ -145,8 +145,9 @@ export interface Tradeup {
 	availability: number;
 	collection: string;
 	rarity: string;
-	expected_value: number;
+	expected_value: number | null;
+	profit_chance: number;
 	max_required_float: number;
-	input: SkinInfo;
-	outcomes: SkinInfo[] | null;
+	inputs: SkinInfo[] | FinalItem[];
+	outcomes: SkinInfo[] | FinalItem[] | null;
 }

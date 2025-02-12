@@ -126,6 +126,7 @@ async function fetchJSON(url: URL) {
 
 async function saveUrlToJSON(url: URL, fileURL: URL): Promise<any> {
 	try {
+		console.log("fetching url...");
 		const data = await fetchJSON(url);
 		const jsonString = JSON.stringify(data, null, 2); // Pretty-print JSON
 
@@ -348,8 +349,6 @@ function insertPriceInfo(collections: Collection[], priceData: GroupedRaritiesPr
 					};
 					return {
 						...item,
-						image: priceInfo?.itemimage,
-						steamurl: priceInfo?.steamurl,
 						prices: prices,
 						unstable: priceInfo?.unstable,
 					};
@@ -456,8 +455,10 @@ function findCheapestItem(
 			...tradeup,
 			max_required_float: max_required_float_correct,
 			availability: Math.trunc(floatScarcity * 10) / 10, //round to 1 place after decimal
-			input: cheapestItem,
+			inputs: [cheapestItem],
 			outcomes: null,
+			expected_value: 0,
+			profit_chance: -1,
 		};
 	});
 
@@ -520,20 +521,29 @@ function calculateTradeupOutcomes(tradeups: Tradeup[], groupedItems: Collection[
 function calculateExpectedValue(tradeups: Tradeup[]) {
 	return tradeups.map((tradeup) => {
 		const profitBruto =
-			tradeup.outcomes!.reduce((sum, outcome) => sum + outcome.prices[price_type], 0) / tradeup.outcomes!.length;
-		const expectedValue = 10 * -tradeup.input.prices[price_type] + profitBruto * (1 - fee * 0.01);
+			tradeup.outcomes!.reduce((sum: number, outcome: SkinInfo | FinalItem) => sum + outcome.prices[price_type], 0) /
+			tradeup.outcomes!.length;
+		const expectedValue = 10 * -tradeup.inputs[0].prices[price_type] + profitBruto * (1 - fee * 0.01);
+		const chanceToProfit: number =
+			(100 *
+				tradeup.outcomes!.reduce(
+					(sum: number, outcome: SkinInfo | FinalItem) =>
+						sum + (outcome.prices[price_type] * (1 - fee * 0.01) > 10 * tradeup.inputs[0].prices[price_type] ? 1 : 0),
+					0
+				)) /
+			tradeup.outcomes!.length;
 
 		const input: FinalItem = {
 			count: 10,
-			name: tradeup.input.name,
-			min_float: tradeup.input.min_float,
-			max_float: tradeup.input.max_float,
-			stattrak: tradeup.input.stattrak,
-			image: tradeup.input.image,
-			float_category: tradeup.input.float_category,
-			steamurl: tradeup.input.steamurl,
-			prices: tradeup.input.prices,
-			unstable: tradeup.input.unstable,
+			name: tradeup.inputs[0].name,
+			min_float: tradeup.inputs[0].min_float,
+			max_float: tradeup.inputs[0].max_float,
+			stattrak: tradeup.inputs[0].stattrak,
+			image: tradeup.inputs[0].image,
+			float_category: tradeup.inputs[0].float_category,
+			steamurl: tradeup.inputs[0].steamurl,
+			prices: tradeup.inputs[0].prices,
+			unstable: tradeup.inputs[0].unstable,
 			output_float: -1,
 		};
 
@@ -557,8 +567,9 @@ function calculateExpectedValue(tradeups: Tradeup[]) {
 			collection: tradeup.collection,
 			rarity: tradeup.rarity,
 			availability: tradeup.availability,
+			inputs: [input],
 			expected_value: expectedValue,
-			inputs: input,
+			profit_chance: chanceToProfit,
 			outcomes: outcomes,
 		};
 	});
