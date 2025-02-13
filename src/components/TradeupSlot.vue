@@ -5,6 +5,7 @@ import '../style.css';
 import type { Tradeup } from '../../tradeuptracker/types.ts';
 
 const props = defineProps<{
+    even: Boolean,
     tradeup: Tradeup,
     selectedPrice: string
 }>();
@@ -35,7 +36,7 @@ function toFixedTruncate(num: number, decimals: number): string {
 </script>
 
 <template>
-    <div class="container">
+    <div :class="'container ' + (props.even ? 'even-row' : 'odd-row')">
         <div id="pic_name">
             <a :href="tradeup.inputs[0].steamurl" target="_blank">
                 <img :src="tradeup.inputs[0].image" :style="{ background: gradient }" />
@@ -73,6 +74,14 @@ function toFixedTruncate(num: number, decimals: number): string {
 <style scoped>
 .container>* {
     border-bottom: 1px solid var(--text-color-main);
+}
+
+.even-row>* {
+    background-color: var(--background-color-main);
+}
+
+.odd-row>* {
+    background-color: var(--background-color-alt);
 }
 
 

@@ -87,9 +87,9 @@ const onInput = (event: Event) => {
         <div ref="slider" class="custom-slider minmax">
             <div class="minmax-indicator"></div>
             <input ref="inputMin" type="range" name="min" id="min" :min="min" :max="max" :value="minValue" :step="step"
-                @input="onInput" />
-            <input ref="inputMax" type="range" name="max" id="max" :min="min" :max="max" :value="maxValue" :step="step"
-                @input="onInput" />
+                @input="onInput" v-model="sliderMinValue" />
+            <input ref=" inputMax" type="range" name="max" id="max" :min="min" :max="max" :value="maxValue" :step="step"
+                @input="onInput" v-model="sliderMaxValue" />
         </div>
         <div class="minmax-inputs">
             <input type="number" :step="step" v-model="sliderMinValue" />
@@ -237,6 +237,6 @@ a,
 
 .minmax-inputs input {
     width: 60px;
-    margin-top: 5px;
+    margin-top: 0.5em;
 }
 </style>

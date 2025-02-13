@@ -128,6 +128,12 @@ export interface Prices {
 	offervolume: number;
 }
 
+export interface Range {
+	min: number;
+	max: number;
+	name: string;
+}
+
 export interface FinalItem {
 	count: number;
 	name: SkinInfo["name"];

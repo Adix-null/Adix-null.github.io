@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, type Ref } from 'vue';
 import TradeupSlot from './components/TradeupSlot.vue';
 import Navbar from './components/Navbar.vue';
 import Footer_info from './components/Footer.vue'
 import Dropdown from './components/Dropdown.vue';
 import SliderRange from './components/SliderRange.vue';
 
-import type { Tradeup } from '../tradeuptracker/types.ts';
+import type { Tradeup, Range } from '../tradeuptracker/types.ts';
 
 let tradeups: Tradeup[];
 
@@ -33,9 +33,20 @@ onMounted(async () => {
   //console.log(tradeups);
 });
 
-const collectionOptions = ref<string[]>(['Any', 'The eSports Summer 2014 collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection']);
-const priceOptions = ref<string[]>(['latest', 'average', 'median'])
+const setFloatBounds = (quality: string) => {
+  floatSliderMin.value = rangeDictionary[quality].min;
+  floatSliderMax.value = rangeDictionary[quality].max;
+}
 
+const collectionOptions = ref<string[]>(['Any', 'The eSports Summer 2014 collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection']);
+const priceOptions = ref<string[]>(['latest', 'average', 'median']);
+const rangeDictionary: Record<string, Range> = {
+  "FN": { min: 0.0, max: 0.07, name: "Factory New" },
+  "MW": { min: 0.07, max: 0.15, name: "Minimal Wear" },
+  "FT": { min: 0.15, max: 0.38, name: "Field-Tested" },
+  "WW": { min: 0.38, max: 0.45, name: "Well-Worn" },
+  "BS": { min: 0.45, max: 1.0, name: "Battle-Scarred" }
+}
 </script>
 
 <template>
@@ -54,6 +65,14 @@ const priceOptions = ref<string[]>(['latest', 'average', 'median'])
         <label>Float needed</label>
         <SliderRange :min="0" :max="1" :step="0.001" v-model:min-value="floatSliderMin"
           v-model:max-value="floatSliderMax" />
+
+        <div id="rarityButtons">
+          <button @click="setFloatBounds('FN')">FN</button>
+          <button @click="setFloatBounds('MW')">MW</button>
+          <button @click="setFloatBounds('FT')">FT</button>
+          <button @click="setFloatBounds('WW')">WW</button>
+          <button @click="setFloatBounds('BS')">BS</button>
+        </div>
       </div>
 
       <div class="category">
@@ -105,8 +124,6 @@ const priceOptions = ref<string[]>(['latest', 'average', 'median'])
       </div>
     </div>
 
-
-
     <div id="item-view">
       <div id="item-table-labels">
         <div class="field">
@@ -138,13 +155,13 @@ const priceOptions = ref<string[]>(['latest', 'average', 'median'])
           <button>▼</button>
         </div>
         <div class="field">
-          <p>Liquidity</p>
+          <p>24h volume</p>
           <button>▼</button>
         </div>
 
       </div>
       <div id="item-list">
-        <TradeupSlot v-for="(tradeup, index) in tradeups" :key="index" :tradeup="tradeup"
+        <TradeupSlot v-for="(tradeup, index) in tradeups" :key="index" :even="(index % 2) == 0" :tradeup="tradeup"
           :selectedPrice="selectedPriceOption" />
       </div>
     </div>
@@ -171,6 +188,25 @@ const priceOptions = ref<string[]>(['latest', 'average', 'median'])
   align-items: start;
   text-align: left;
   border-right: 2px solid var(--text-color-main);
+}
+
+#rarityButtons {
+  display: none;
+
+  margin-top: 0.5em;
+  /* display: flex; */
+  flex-direction: row;
+  justify-content: space-around;
+  text-align: center;
+}
+
+#rarityButtons>button {
+  width: 100%;
+  border: 1px solid var(--text-color-main);
+}
+
+#rarityButtons>button:hover {
+  background-color: var(--background-color-hover);
 }
 
 .category {

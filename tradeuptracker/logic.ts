@@ -1,4 +1,4 @@
-import { SkinInfo, SkinPrice, Prices, FinalItem, Tradeup } from "./types.ts";
+import { SkinInfo, SkinPrice, Prices, Range, FinalItem, Tradeup } from "./types.ts";
 
 const priceUrl: URL = new URL(
 	"https://www.steamwebapi.com/steam/api/items?key=72ZDY58DKG0WJNJ4&sort_by=name&item_group=rifle,sniper+rifle,machinegun,pistol,smg,shotgun,equipment"
@@ -236,12 +236,6 @@ function groupPricesByRarity(groups: { [collectionName: string]: SkinPrice[] }):
 			rarities: sortedRarities,
 		};
 	});
-}
-
-interface Range {
-	min: number;
-	max: number;
-	name: string;
 }
 
 function expandItemsByFloatRanges(collections: GroupedRaritiesInfo[]): GroupedRaritiesInfo[] {

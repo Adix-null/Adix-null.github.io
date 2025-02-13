@@ -1,5 +1,6 @@
 :root {
-	--background-color-main: hsl(0, 0%, 14%);
+	--background-color-main: hsl(0, 0%, 12%);
+	--background-color-alt: hsl(0, 0%, 18%);
 	--background-color-hover: hsl(0, 0%, 60%);
 	--text-color-main: hsl(0, 0%, 94%);
 	--slider-background: #005a3c;
