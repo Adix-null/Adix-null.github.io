@@ -7,6 +7,7 @@ const pricePath: URL = new URL("./items.json", import.meta.url);
 const infoUrl: URL = new URL("https://bymykel.github.io/CSGO-API/api/en/skins.json");
 const infoPath: URL = new URL("./skins.json", import.meta.url);
 const tradeupPath: URL = new URL("./tradeups.json", import.meta.url);
+const tradeupPathTest: URL = new URL("./tradeuptest.json", import.meta.url);
 
 //deno run --allow-read --allow-write --allow-net tradeuptracker/logic.ts
 //TODO: unicode names dont work
@@ -95,6 +96,8 @@ async function processItems() {
 
 		await Deno.writeTextFile(tradeupPath, JSON.stringify(tradeupList));
 		console.log("File written successfully!");
+
+		await Deno.writeTextFile(tradeupPathTest, JSON.stringify(tradeupList.slice(100, 130)));
 
 		console.log((Date.now() - start) / 1000 + "s");
 	} catch (error) {
@@ -241,12 +244,7 @@ interface Range {
 	name: string;
 }
 
-interface Collection {
-	collectionName: string;
-	rarities: Map<string, SkinInfo[]>;
-}
-
-function expandItemsByFloatRanges(collections: Collection[]): Collection[] {
+function expandItemsByFloatRanges(collections: GroupedRaritiesInfo[]): GroupedRaritiesInfo[] {
 	return collections.map((collection) => ({
 		...collection,
 		rarities: new Map(
@@ -254,7 +252,7 @@ function expandItemsByFloatRanges(collections: Collection[]): Collection[] {
 				rarity,
 				items.flatMap((item) => {
 					return rangeDictionary
-						.filter((range) => item.max_float > range.min && item.min_float <= range.max)
+						.filter((range: Range) => item.max_float > range.min && item.min_float <= range.max)
 						.map((range) => ({
 							...item,
 							name: item.name + " (" + range.name + ")",
@@ -266,7 +264,7 @@ function expandItemsByFloatRanges(collections: Collection[]): Collection[] {
 	}));
 }
 
-function generateStattrakCollections(collections: Collection[]): Collection[] {
+function generateStattrakCollections(collections: GroupedRaritiesInfo[]): GroupedRaritiesInfo[] {
 	return collections.flatMap((collection) => {
 		const firstRarity: SkinInfo[] = [...collection.rarities.entries()][0][1];
 		const hasStatTrak: boolean = firstRarity?.[0]?.stattrak || false;
@@ -309,7 +307,7 @@ function generateStattrakCollections(collections: Collection[]): Collection[] {
 	});
 }
 
-function insertPriceInfo(collections: Collection[], priceData: GroupedRaritiesPrice[]) {
+function insertPriceInfo(collections: GroupedRaritiesInfo[], priceData: GroupedRaritiesPrice[]) {
 	return collections.map((collection) => ({
 		...collection,
 		rarities: new Map(
@@ -350,6 +348,8 @@ function insertPriceInfo(collections: Collection[], priceData: GroupedRaritiesPr
 					return {
 						...item,
 						prices: prices,
+						steamurl: priceInfo?.steamurl,
+						volume24h: priceInfo?.sold24h ?? 0,
 						unstable: priceInfo?.unstable,
 					};
 				}),
@@ -361,7 +361,7 @@ function insertPriceInfo(collections: Collection[], priceData: GroupedRaritiesPr
 //tradeup logic
 
 function calculateTradeupRequirements(
-	collections: Collection[]
+	collections: GroupedRaritiesInfo[]
 ): { max_required_float: number; collection: string; rarity: string | null }[] {
 	const tradeupRequirements: { max_required_float: number; collection: string; rarity: string | null }[] = [];
 
@@ -414,7 +414,7 @@ function calculateTradeupRequirements(
 
 function findCheapestItem(
 	tradeups: { collection: string; rarity: string; max_required_float: number }[],
-	groupedItems: Collection[]
+	groupedItems: GroupedRaritiesInfo[]
 ): (Tradeup | null)[] {
 	const bestTradeupItems: (Tradeup | null)[] = tradeups.map((tradeup) => {
 		const { collection, rarity, max_required_float } = tradeup;
@@ -478,7 +478,7 @@ function findCheapestItem(
 	return uniqueItems;
 }
 
-function calculateTradeupOutcomes(tradeups: Tradeup[], groupedItems: Collection[]): Tradeup[] {
+function calculateTradeupOutcomes(tradeups: Tradeup[], groupedItems: GroupedRaritiesInfo[]): Tradeup[] {
 	return tradeups.map((tradeup) => {
 		const { collection, rarity, max_required_float } = tradeup;
 
@@ -544,6 +544,7 @@ function calculateExpectedValue(tradeups: Tradeup[]) {
 			steamurl: tradeup.inputs[0].steamurl,
 			prices: tradeup.inputs[0].prices,
 			unstable: tradeup.inputs[0].unstable,
+			volume24h: tradeup.inputs[0].volume24h,
 			output_float: -1,
 		};
 

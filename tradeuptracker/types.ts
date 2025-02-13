@@ -13,6 +13,7 @@ export interface SkinInfo {
 	output_float?: string;
 	rarity: { id: string; name: string; color: string };
 	prices: { [key: string]: Prices[keyof Prices] };
+	volume24h: number;
 	stattrak: boolean;
 	souvenir: boolean;
 	paint_index: string;
@@ -139,6 +140,7 @@ export interface FinalItem {
 	prices: SkinInfo["prices"];
 	unstable: SkinPrice["unstable"];
 	output_float: number;
+	volume24h: number;
 }
 
 export interface Tradeup {

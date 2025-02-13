@@ -2,11 +2,15 @@
 import { ref } from 'vue';
 import '../style.css'
 
-defineProps({
+const props = defineProps({
     options: {
         type: Array as () => string[],
         required: true,
     },
+    default: {
+        type: Number,
+        required: false
+    }
 });
 
 const isDropdownOpen = ref(false);
@@ -20,6 +24,9 @@ const selectOption = (option: string) => {
     selectedOption.value = option;
     isDropdownOpen.value = false;
 };
+
+if (props.default != null)
+    selectOption(props.options[props.default]);
 </script>
 
 <template>

@@ -25,6 +25,11 @@ const nameColor = computed(() =>
 const gradient = computed(() =>
     `linear-gradient(90deg, #${RarityDictionary[props.tradeup.rarity]}dd, #00000000)`
 );
+
+function toFixedTruncate(num: number, decimals: number): string {
+    const factor = 10 ** decimals;
+    return (Math.trunc(num * factor) / factor).toFixed(decimals);
+}
 //linear - gradient(90deg, rgba(136, 71, 255, 0.8) 0 %, rgba(0, 0, 0, 0) 100 %)
 //:rarity="tradeup.rarity"
 </script>
@@ -44,22 +49,22 @@ const gradient = computed(() =>
             {{ tradeup.outcomes!.length }}
         </p>
         <p id="price">
-            {{ tradeup.inputs[0].prices[selectedPrice] }}
+            {{ toFixedTruncate(tradeup.inputs[0].prices[selectedPrice] * 10, 2) }}$
         </p>
         <p id="profit">
-            {{ tradeup.expected_value!.toFixed(2) }}$
+            {{ toFixedTruncate(tradeup.expected_value!, 2) }}$
         </p>
         <p id="profit_chance">
-            {{ tradeup.profit_chance!.toFixed(0) }}%
+            {{ toFixedTruncate(tradeup.profit_chance!, 0) }}%
         </p>
         <p id="max_float">
-            {{ tradeup.max_required_float.toFixed(3) }}
+            {{ toFixedTruncate(tradeup.max_required_float, 4) }}
         </p>
         <p id="availability">
             {{ tradeup.availability }}%
         </p>
         <p id="volume_24h">
-            0
+            {{ tradeup.inputs[0].volume24h }}
         </p>
 
     </div>

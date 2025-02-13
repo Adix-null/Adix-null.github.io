@@ -22,7 +22,7 @@ const dropdownOptions = ref<string[]>(['USD', 'EUR', 'CNY']);
             </a>
         </div>
         <div id="currency">
-            <Dropdown :options="dropdownOptions" />
+            <Dropdown :options="dropdownOptions" :default="0" />
         </div>
     </div>
 </template>

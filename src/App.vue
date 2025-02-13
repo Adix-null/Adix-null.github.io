@@ -30,10 +30,10 @@ onMounted(async () => {
   const response = await fetch('../tradeuptracker/tradeuptest.json');
   tradeups = await response.json();
   tradeups = tradeups.slice(0, 20);
-  console.log(tradeups);
+  //console.log(tradeups);
 });
 
-const collectionOptions = ref<string[]>(['The eSports Summer 2014 collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection']);
+const collectionOptions = ref<string[]>(['Any', 'The eSports Summer 2014 collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection']);
 const priceOptions = ref<string[]>(['latest', 'average', 'median'])
 
 </script>
@@ -58,12 +58,12 @@ const priceOptions = ref<string[]>(['latest', 'average', 'median'])
 
       <div class="category">
         <label>Collection</label>
-        <Dropdown :options="collectionOptions" />
+        <Dropdown :options="collectionOptions" :default="0" />
       </div>
 
       <div id="search_rarities" class="category">
         <label>Rarity</label>
-        <div><input type="checkbox" id="Any">Any</input></div>
+        <div><input type="checkbox" id="Any" checked="true">Any</input></div>
         <div><input type="checkbox" id="Classified">Classified</input></div>
         <div><input type="checkbox" id="Restricted">Restricted</input></div>
         <div><input type="checkbox" id="Mil-Spec Grade">Mil-Spec Grade</input></div>
@@ -74,7 +74,7 @@ const priceOptions = ref<string[]>(['latest', 'average', 'median'])
       <br />
       <div id="search_price" class="category">
         <label>Price</label>
-        <Dropdown :options="priceOptions" />
+        <Dropdown :options="priceOptions" :default="0" />
         <SliderRange :min="0" :max="100" :step="0.01" v-model:min-value="priceSliderMin"
           v-model:max-value="priceSliderMax" />
       </div>
