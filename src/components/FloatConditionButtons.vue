@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Ref } from 'vue';
-import { rangeDictionary } from '../../tradeuptracker/types.ts';
+import { rangeDictionary, shorthandKeys } from '../../tradeuptracker/types.ts';
 
 
 const props = defineProps<{
@@ -16,11 +16,7 @@ const setFloatBounds = (quality: string) => {
 
 <template>
     <div id="container">
-        <button @click="setFloatBounds('FN')">FN</button>
-        <button @click="setFloatBounds('MW')">MW</button>
-        <button @click="setFloatBounds('FT')">FT</button>
-        <button @click="setFloatBounds('WW')">WW</button>
-        <button @click="setFloatBounds('BS')">BS</button>
+        <button v-for="float in shorthandKeys " @click=setFloatBounds(float)>{{ float }}</button>
     </div>
 </template>
 

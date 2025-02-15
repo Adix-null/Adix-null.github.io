@@ -7,6 +7,7 @@ import Dropdown from './components/Dropdown.vue';
 import SliderRange from './components/SliderRange.vue';
 import FloatConditionButtons from './components/FloatConditionButtons.vue';
 import RarityOptions from './components/RarityOptions.vue';
+import TradeupTableLabels from './components/TradeupTableLabels.vue';
 
 import type { Tradeup, Range, Prices } from '../tradeuptracker/types.ts';
 
@@ -25,6 +26,8 @@ const availabilitySliderMax = ref(100);
 const liquiditySliderMin = ref(0);
 const liquiditySliderMax = ref(100);
 
+const tableLabels: String[] = ['Item Info', 'Outcomes', 'Price', 'Profit', 'Profit Chance', 'Float', 'Availability', '24h Volume'];
+
 const selectedPriceOption = "pricelatest";
 const priceOptions = ref<string[]>(['latest', 'average', 'median']);
 
@@ -36,6 +39,22 @@ onMounted(async () => {
   } catch (error) {
     console.error('Failed to load JSON:', error);
   }
+});
+
+const sortState = ref<{ index: number; direction: number }>({ index: -1, direction: 0 });
+
+const onSort = (index: number, state: number) => {
+  sortState.value = { index, direction: state };
+};
+
+const sortedTradeups = computed(() => {
+  if (sortState.value.direction === 0) return tradeups.value; // Neutral state
+
+  return [...tradeups.value].sort((a, b) => {
+    const key: String = tableLabels[sortState.value.index];
+    if (sortState.value.direction === 1) return a["expected_value"]! < b["expected_value"]! ? 1 : -1;
+    return a["expected_value"]! > b["expected_value"]! ? 1 : -1;
+  });
 });
 
 const collectionOptions = ref<string[]>(['Any', 'The eSports Summer 2014 collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection']);
@@ -107,43 +126,11 @@ const collectionOptions = ref<string[]>(['Any', 'The eSports Summer 2014 collect
 
     <div id="item-view">
       <div id="item-table-labels">
-        <div class="field">
-          <p>Item Info</p>
-          <button>▼</button>
-        </div>
-        <div class="field">
-          <p>Outcomes</p>
-          <button>▼</button>
-        </div>
-        <div class="field">
-          <p>Price</p>
-          <button>▼</button>
-        </div>
-        <div class="field">
-          <p>Profit</p>
-          <button>▼</button>
-        </div>
-        <div class="field">
-          <p>Profit chance</p>
-          <button>▼</button>
-        </div>
-        <div class="field">
-          <p>Float</p>
-          <button>▼</button>
-        </div>
-        <div class="field">
-          <p>Availability</p>
-          <button>▼</button>
-        </div>
-        <div class="field">
-          <p>24h volume</p>
-          <button>▼</button>
-        </div>
-
-
+        <TradeupTableLabels :labels="tableLabels" @toggle="onSort" />
       </div>
+
       <div id="item-list">
-        <TradeupSlot v-for="(tradeup, index) in tradeups" :key="index" :even="(index % 2) == 0" :tradeup="tradeup"
+        <TradeupSlot v-for="(tradeup, index) in sortedTradeups" :key="index" :even="(index % 2) == 0" :tradeup="tradeup"
           :selectedPrice="selectedPriceOption" />
       </div>
     </div>
@@ -193,7 +180,6 @@ input[type=checkbox] {
   margin-right: 0.5em;
 }
 
-
 #item-view {
   width: 100%;
   min-width: 750px;
@@ -203,34 +189,10 @@ input[type=checkbox] {
   padding-left: 1em;
 }
 
-#item-table-labels {
-  display: grid;
-  border-bottom: 2px solid white;
-  font-size: 0.85em;
-}
 
-#item-table-labels,
+#item-table-labels>*,
 #item-list {
   grid-template-columns: 3fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-}
-
-.field {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.field>p {
-  margin-right: 0.5em;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.field>button {
-  height: auto;
 }
 
 #item-list {

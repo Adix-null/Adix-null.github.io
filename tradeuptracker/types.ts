@@ -194,7 +194,7 @@ export const ranges: Range[] = [
 	{ min: 0.45, max: 1.0, name: "Battle-Scarred" },
 ];
 
-const shorthandKeys = ["FN", "MW", "FT", "WW", "BS"] as const;
+export const shorthandKeys = ["FN", "MW", "FT", "WW", "BS"] as const;
 
 export const rangeDictionary: Record<(typeof shorthandKeys)[number], Range> = Object.fromEntries(
 	shorthandKeys.map((key, index) => [key, ranges[index]])
