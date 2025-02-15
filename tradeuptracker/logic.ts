@@ -1,4 +1,14 @@
-import { SkinInfo, SkinPrice, Prices, Range, FinalItem, Tradeup } from "./types.ts";
+import {
+	SkinInfo,
+	SkinPrice,
+	Prices,
+	Range,
+	FinalItem,
+	Tradeup,
+	priceTypeNames,
+	raritiesOrder,
+	ranges,
+} from "./types.ts";
 
 const priceUrl: URL = new URL(
 	"https://www.steamwebapi.com/steam/api/items?key=72ZDY58DKG0WJNJ4&sort_by=name&item_group=rifle,sniper+rifle,machinegun,pistol,smg,shotgun,equipment"
@@ -6,45 +16,15 @@ const priceUrl: URL = new URL(
 const pricePath: URL = new URL("./items.json", import.meta.url);
 const infoUrl: URL = new URL("https://bymykel.github.io/CSGO-API/api/en/skins.json");
 const infoPath: URL = new URL("./skins.json", import.meta.url);
-const tradeupPath: URL = new URL("./tradeups.json", import.meta.url);
-const tradeupPathTest: URL = new URL("./tradeuptest.json", import.meta.url);
+const tradeupPath: URL = new URL("../public/tradeups.json", import.meta.url);
+const tradeupPathTest: URL = new URL("../public/tradeuptest.json", import.meta.url);
 
 //deno run --allow-read --allow-write --allow-net tradeuptracker/logic.ts
 //TODO: unicode names dont work
 
-const rangeDictionary: Range[] = [
-	{ min: 0.0, max: 0.07, name: "Factory New" },
-	{ min: 0.07, max: 0.15, name: "Minimal Wear" },
-	{ min: 0.15, max: 0.38, name: "Field-Tested" },
-	{ min: 0.38, max: 0.45, name: "Well-Worn" },
-	{ min: 0.45, max: 1.0, name: "Battle-Scarred" },
-];
-const raritiesOrder: string[] = [
-	"Consumer Grade",
-	"Industrial Grade",
-	"Mil-Spec Grade",
-	"Restricted",
-	"Classified",
-	"Covert",
-];
 const epsilon: number = 0.000001;
 const fee: number = 13;
-const priceTypeNames: string[] = [
-	"pricelatest",
-	"pricelatestsell",
-	"pricelatestsell24h",
-	"pricelatestsell",
-	"pricemedian",
-	"pricemedian24h",
-	"pricemedian7d",
-	"priceavg",
-	"priceavg24h",
-	"priceavg7d",
-	"pricesafe",
-	"pricemin",
-	"pricemax",
-	"buyorderprice",
-];
+
 const price_type: string = priceTypeNames[0];
 const fetch_web: boolean = false;
 
@@ -97,7 +77,7 @@ async function processItems() {
 		await Deno.writeTextFile(tradeupPath, JSON.stringify(tradeupList));
 		console.log("File written successfully!");
 
-		await Deno.writeTextFile(tradeupPathTest, JSON.stringify(tradeupList.slice(100, 130)));
+		await Deno.writeTextFile(tradeupPathTest, JSON.stringify(tradeupList.slice(120, 150)));
 
 		console.log((Date.now() - start) / 1000 + "s");
 	} catch (error) {
@@ -245,7 +225,7 @@ function expandItemsByFloatRanges(collections: GroupedRaritiesInfo[]): GroupedRa
 			[...collection.rarities.entries()].map(([rarity, items]) => [
 				rarity,
 				items.flatMap((item) => {
-					return rangeDictionary
+					return ranges
 						.filter((range: Range) => item.max_float > range.min && item.min_float <= range.max)
 						.map((range) => ({
 							...item,
@@ -373,7 +353,7 @@ function calculateTradeupRequirements(
 			const requiredFloats = new Set<number>();
 
 			items.forEach((item) => {
-				const qualityFloat = rangeDictionary.find((range) => range.name === item.float_category)?.max ?? 0;
+				const qualityFloat = ranges.find((range) => range.name === item.float_category)?.max ?? 0;
 				const { min_float, max_float } = item;
 				const maxRequiredFloat = (Math.min(qualityFloat, max_float) - min_float) / (max_float - min_float);
 				requiredFloats.add(maxRequiredFloat);
@@ -420,7 +400,7 @@ function findCheapestItem(
 		if (!itemsOfRarity) return null;
 
 		const matchingItems = itemsOfRarity.filter((item) => {
-			const floatRange = rangeDictionary.find((range) => range.name === item.float_category);
+			const floatRange = ranges.find((range) => range.name === item.float_category);
 			return floatRange && max_required_float > floatRange.min;
 		});
 
@@ -432,14 +412,13 @@ function findCheapestItem(
 		if (!cheapestItem) return null;
 
 		let max_required_float_correct = max_required_float;
-		const floatRange: Range =
-			rangeDictionary.find((range) => range.name === cheapestItem.float_category) ?? rangeDictionary[0];
+		const floatRange: Range = ranges.find((range) => range.name === cheapestItem.float_category) ?? ranges[0];
 		if (max_required_float < floatRange?.min || max_required_float > floatRange?.max) {
 			max_required_float_correct = Math.min(floatRange?.max ?? 0, cheapestItem.max_float);
 		}
 
 		max_required_float_correct -= epsilon;
-		const rangeScarcity = rangeDictionary.find(
+		const rangeScarcity = ranges.find(
 			(range) => max_required_float_correct > range.min && max_required_float_correct <= range.max
 		);
 		const floatScarcity: number =
@@ -494,7 +473,7 @@ function calculateTradeupOutcomes(tradeups: Tradeup[], groupedItems: GroupedRari
 				const expectedFloat = max_required_float * (skin.max_float - skin.min_float) + skin.min_float;
 
 				// Get the float category from the range dictionary
-				const floatCategory = rangeDictionary.find((range) => range.name === skin.float_category);
+				const floatCategory = ranges.find((range) => range.name === skin.float_category);
 
 				// Ensure the float is within the valid range
 				if (!floatCategory) return null;

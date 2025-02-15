@@ -159,3 +159,53 @@ export interface Tradeup {
 	inputs: SkinInfo[] | FinalItem[];
 	outcomes: SkinInfo[] | FinalItem[] | null;
 }
+
+export const priceTypeNames: string[] = [
+	"pricelatest",
+	"pricelatestsell",
+	"pricelatestsell24h",
+	"pricelatestsell",
+	"pricemedian",
+	"pricemedian24h",
+	"pricemedian7d",
+	"priceavg",
+	"priceavg24h",
+	"priceavg7d",
+	"pricesafe",
+	"pricemin",
+	"pricemax",
+	"buyorderprice",
+];
+
+export const raritiesOrder: string[] = [
+	"Consumer Grade",
+	"Industrial Grade",
+	"Mil-Spec Grade",
+	"Restricted",
+	"Classified",
+	"Covert",
+];
+
+export const ranges: Range[] = [
+	{ min: 0.0, max: 0.07, name: "Factory New" },
+	{ min: 0.07, max: 0.15, name: "Minimal Wear" },
+	{ min: 0.15, max: 0.38, name: "Field-Tested" },
+	{ min: 0.38, max: 0.45, name: "Well-Worn" },
+	{ min: 0.45, max: 1.0, name: "Battle-Scarred" },
+];
+
+const shorthandKeys = ["FN", "MW", "FT", "WW", "BS"] as const;
+
+export const rangeDictionary: Record<(typeof shorthandKeys)[number], Range> = Object.fromEntries(
+	shorthandKeys.map((key, index) => [key, ranges[index]])
+) as Record<(typeof shorthandKeys)[number], Range>;
+
+export const RarityColorDictionary: Record<string, string> = {
+	"Consumer Grade": "b0c3d9",
+	"Industrial Grade": "5e98d9",
+	"Mil-Spec Grade": "4b69ff",
+	Restricted: "8847ff",
+	Classified: "d32ce6",
+	Covert: "eb4b4b",
+};
+export const stattrakColor = "#cf6a32";

@@ -3,6 +3,7 @@ import { computed, defineProps, ref } from 'vue';
 import '../style.css';
 
 import type { Tradeup } from '../../tradeuptracker/types.ts';
+import { RarityColorDictionary, stattrakColor } from '../../tradeuptracker/types.ts';
 
 const props = defineProps<{
     even: Boolean,
@@ -10,29 +11,18 @@ const props = defineProps<{
     selectedPrice: string
 }>();
 
-const RarityDictionary: Record<string, string> = {
-    "Consumer Grade": "b0c3d9",
-    "Industrial Grade": "5e98d9",
-    "Mil-Spec Grade": "4b69ff",
-    "Restricted": "8847ff",
-    "Classified": "d32ce6",
-    "Covert": "eb4b4b",
-}
-const stattrakColor = "#cf6a32";
 const nameColor = computed(() =>
     props.tradeup.inputs[0].stattrak ? stattrakColor : "initial"
 );
 
 const gradient = computed(() =>
-    `linear-gradient(90deg, #${RarityDictionary[props.tradeup.rarity]}dd, #00000000)`
+    `linear-gradient(90deg, #${RarityColorDictionary[props.tradeup.rarity]}dd, #00000000)`
 );
 
 function toFixedTruncate(num: number, decimals: number): string {
     const factor = 10 ** decimals;
     return (Math.trunc(num * factor) / factor).toFixed(decimals);
 }
-//linear - gradient(90deg, rgba(136, 71, 255, 0.8) 0 %, rgba(0, 0, 0, 0) 100 %)
-//:rarity="tradeup.rarity"
 </script>
 
 <template>
