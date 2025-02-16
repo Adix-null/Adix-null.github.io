@@ -33,10 +33,10 @@ const toggleField = (index: number) => {
 
 <template>
     <div id="container">
-        <div v-for="(field, index) in labels" :key="index" class="field">
+        <div v-for="(field, index) in props.labels" :key="index" class="field">
             <p>{{ field }}</p>
             <button @click="toggleField(index)">
-                {{ states[index] === 1 ? '▲' : states[index] === -1 ? '▼' : '⬍' }}
+                {{ states[index] === 1 ? '▼' : states[index] === -1 ? '▲' : '⬍' }}
             </button>
         </div>
     </div>

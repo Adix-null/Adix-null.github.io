@@ -31,6 +31,15 @@ const tableLabels: String[] = ['Item Info', 'Outcomes', 'Price', 'Profit', 'Prof
 const selectedPriceOption = "pricelatest";
 const priceOptions = ref<string[]>(['latest', 'average', 'median']);
 
+const condFloatMin = ref(0);;
+const condFloatMax = ref(0);;
+
+const onSetFloat = (floatSliderMin: number, floatSliderMax: number) => {
+  condFloatMin.value = floatSliderMin;
+  condFloatMax.value = floatSliderMax;
+  console.log(condFloatMin.value);
+};
+
 onMounted(async () => {
   try {
     const response = await fetch('/tradeuptest.json');
@@ -51,9 +60,32 @@ const sortedTradeups = computed(() => {
   if (sortState.value.direction === 0) return tradeups.value; // Neutral state
 
   return [...tradeups.value].sort((a, b) => {
-    const key: String = tableLabels[sortState.value.index];
-    if (sortState.value.direction === 1) return a["expected_value"]! < b["expected_value"]! ? 1 : -1;
-    return a["expected_value"]! > b["expected_value"]! ? 1 : -1;
+    const fieldMapA = [
+      a.inputs[0].name,
+      a.outcomes!.length,
+      a.inputs[0].prices[selectedPriceOption],
+      a.expected_value!,
+      a.profit_chance,
+      a.max_required_float,
+      a.availability,
+      a.inputs[0].volume24h];
+
+    const fieldMapB = [
+      b.inputs[0].name,
+      b.outcomes!.length,
+      b.inputs[0].prices[selectedPriceOption],
+      b.expected_value!,
+      b.profit_chance,
+      b.max_required_float,
+      b.availability,
+      b.inputs[0].volume24h];
+
+    if (sortState.value.direction === 1)
+      return fieldMapA[sortState.value.index] < fieldMapB[sortState.value.index] ? 1 : -1;
+    else if (sortState.value.direction === -1)
+      return fieldMapA[sortState.value.index] > fieldMapB[sortState.value.index] ? 1 : -1;
+    else
+      return 0;
   });
 });
 
@@ -76,8 +108,9 @@ const collectionOptions = ref<string[]>(['Any', 'The eSports Summer 2014 collect
       <div class="category">
         <label>Float needed</label>
         <SliderRange :min="0" :max="1" :step="0.001" v-model:min-value="floatSliderMin"
-          v-model:max-value="floatSliderMax" />
-        <FloatConditionButtons :float-slider-min="floatSliderMin" :float-slider-max="floatSliderMax" />
+          v-model:max-value="floatSliderMax" v-model:set-min="condFloatMin" v-model:set-max="condFloatMax" />
+        <FloatConditionButtons :float-slider-min="floatSliderMin" :float-slider-max="floatSliderMax"
+          @updateFloatSlider="onSetFloat" />
       </div>
 
       <div class="category">

@@ -1,7 +1,7 @@
 <!-- source is https://github.com/miracleonyenma/custom-vue-range-slider -->
 
 <script setup lang="ts">
-import { ref, watchEffect } from "vue";
+import { ref, watch, watchEffect } from "vue";
 import '../style.css';
 
 // Define component props with proper TypeScript types
@@ -11,6 +11,8 @@ const props = defineProps<{
     step?: number;
     minValue?: number;
     maxValue?: number;
+    setMin?: number,
+    setMax?: number
 }>();
 
 // Default values for props (Vue does not apply defaults in setup(), so we handle it manually)
@@ -44,6 +46,17 @@ const setCSSProps = (left: number, right: number) => {
     }
 };
 
+//Update values not by user
+watch(() => props.setMin, (newValue) => {
+    if (newValue !== undefined) {
+        sliderMinValue.value = newValue;
+    }
+});
+watch(() => props.setMax, (newValue) => {
+    if (newValue !== undefined) {
+        sliderMaxValue.value = newValue;
+    }
+});
 // Watch effect to update emitted values and CSS variables when slider values change
 watchEffect(() => {
     if (slider.value) {
@@ -88,7 +101,7 @@ const onInput = (event: Event) => {
             <div class="minmax-indicator"></div>
             <input ref="inputMin" type="range" name="min" id="min" :min="min" :max="max" :value="minValue" :step="step"
                 @input="onInput" v-model="sliderMinValue" />
-            <input ref=" inputMax" type="range" name="max" id="max" :min="min" :max="max" :value="maxValue" :step="step"
+            <input ref="inputMax" type="range" name="max" id="max" :min="min" :max="max" :value="maxValue" :step="step"
                 @input="onInput" v-model="sliderMaxValue" />
         </div>
         <div class="minmax-inputs">
