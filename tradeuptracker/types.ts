@@ -186,6 +186,10 @@ export const raritiesOrder: string[] = [
 	"Covert",
 ];
 
+export const rarityDictionary: Record<string, number> = Object.fromEntries(
+	raritiesOrder.map((rarity: string, index: number) => [rarity, index])
+);
+
 export const ranges: Range[] = [
 	{ min: 0.0, max: 0.07, name: "Factory New" },
 	{ min: 0.07, max: 0.15, name: "Minimal Wear" },
@@ -200,12 +204,9 @@ export const rangeDictionary: Record<(typeof shorthandKeys)[number], Range> = Ob
 	shorthandKeys.map((key, index) => [key, ranges[index]])
 ) as Record<(typeof shorthandKeys)[number], Range>;
 
-export const RarityColorDictionary: Record<string, string> = {
-	"Consumer Grade": "b0c3d9",
-	"Industrial Grade": "5e98d9",
-	"Mil-Spec Grade": "4b69ff",
-	Restricted: "8847ff",
-	Classified: "d32ce6",
-	Covert: "eb4b4b",
-};
+const colors = ["b0c3d9", "5e98d9", "4b69ff", "8847ff", "d32ce6", "eb4b4b"];
 export const stattrakColor = "#cf6a32";
+
+export const RarityColorDictionary: Record<string, string> = Object.fromEntries(
+	raritiesOrder.map((rarity, index) => [rarity, colors[index]])
+);

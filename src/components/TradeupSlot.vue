@@ -27,15 +27,13 @@ function toFixedTruncate(num: number, decimals: number): string {
 
 <template>
     <div :class="'container ' + (props.even ? 'even-row' : 'odd-row')">
-        <div id="pic_name">
-            <a :href="tradeup.inputs[0].steamurl" target="_blank">
-                <img :src="tradeup.inputs[0].image" :style="{ background: gradient }" />
-            </a>
+        <a :href="tradeup.inputs[0].steamurl" target="_blank " id="pic">
+            <img :src="tradeup.inputs[0].image" :style="{ background: gradient }" />
+        </a>
+        <p id="name" :style="{ color: nameColor }">
             <!-- Longest possible name - Dual Berettas | Sweet Little Angels (Battle-Scarred), 52 chars -->
-            <p id="name" :style="{ color: nameColor }">
-                {{ tradeup.inputs[0].name }}
-            </p>
-        </div>
+            {{ tradeup.inputs[0].name }}
+        </p>
         <p id="output_count">
             {{ tradeup.outcomes!.length }}
         </p>
@@ -82,27 +80,24 @@ function toFixedTruncate(num: number, decimals: number): string {
     text-align: center;
 }
 
+a,
 p {
     height: 100%;
     margin: 0;
     padding: 0;
 }
 
-#pic_name {
+#pic {
     display: flex;
     flex-direction: row;
-    justify-self: start;
-    width: 100%;
 }
 
 #name {
     text-align: start;
-    margin-left: 0.5em;
+    padding-left: 0.25em;
 }
 
 #pic_name>img {
     aspect-ratio: 4 / 3;
-    flex-grow: 0;
-    margin-right: 1em;
 }
 </style>

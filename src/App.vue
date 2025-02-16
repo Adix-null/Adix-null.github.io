@@ -9,7 +9,7 @@ import FloatConditionButtons from './components/FloatConditionButtons.vue';
 import RarityOptions from './components/RarityOptions.vue';
 import TradeupTableLabels from './components/TradeupTableLabels.vue';
 
-import type { Tradeup, Range, Prices } from '../tradeuptracker/types.ts';
+import { type Tradeup, type Range, type Prices, rarityDictionary } from '../tradeuptracker/types.ts';
 
 const tradeups = ref<Tradeup[]>([]);
 
@@ -26,10 +26,13 @@ const availabilitySliderMax = ref(100);
 const liquiditySliderMin = ref(0);
 const liquiditySliderMax = ref(100);
 
-const tableLabels: String[] = ['Item Info', 'Outcomes', 'Price', 'Profit', 'Profit Chance', 'Float', 'Availability', '24h Volume'];
+const tableLabels: String[] = ['Rarity', 'Item Name', 'Outcomes', 'Price', 'Profit', 'Profit Chance', 'Float', 'Availability', '24h Volume'];
 
 const selectedPriceOption = "pricelatest";
 const priceOptions = ref<string[]>(['latest', 'average', 'median']);
+
+
+const collectionOptions = ref<string[]>(['Any', 'The eSports Summer 2014 collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection']);
 
 const condFloatMin = ref(0);;
 const condFloatMax = ref(0);;
@@ -61,6 +64,7 @@ const sortedTradeups = computed(() => {
 
   return [...tradeups.value].sort((a, b) => {
     const fieldMapA = [
+      rarityDictionary[a.rarity],
       a.inputs[0].name,
       a.outcomes!.length,
       a.inputs[0].prices[selectedPriceOption],
@@ -71,6 +75,7 @@ const sortedTradeups = computed(() => {
       a.inputs[0].volume24h];
 
     const fieldMapB = [
+      rarityDictionary[b.rarity],
       b.inputs[0].name,
       b.outcomes!.length,
       b.inputs[0].prices[selectedPriceOption],
@@ -88,8 +93,6 @@ const sortedTradeups = computed(() => {
       return 0;
   });
 });
-
-const collectionOptions = ref<string[]>(['Any', 'The eSports Summer 2014 collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection']);
 
 </script>
 
@@ -225,7 +228,7 @@ input[type=checkbox] {
 
 #item-table-labels>*,
 #item-list {
-  grid-template-columns: 3fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 3fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
 }
 
 #item-list {
