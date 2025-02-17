@@ -60,6 +60,7 @@ h2 {
     align-content: center;
     border: 2px solid white;
     text-wrap: nowrap;
+    cursor: pointer;
 }
 
 .container {

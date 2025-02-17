@@ -226,7 +226,7 @@ function expandItemsByFloatRanges(collections: GroupedRaritiesInfo[]): GroupedRa
 				rarity,
 				items.flatMap((item) => {
 					return ranges
-						.filter((range: Range) => item.max_float > range.min && item.min_float <= range.max)
+						.filter((range: Range) => item.max_float > range.min && item.min_float < range.max)
 						.map((range) => ({
 							...item,
 							name: item.name + " (" + range.name + ")",

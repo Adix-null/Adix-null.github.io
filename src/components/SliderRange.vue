@@ -119,7 +119,7 @@ const onInput = (event: Event) => {
 a,
 .green {
     text-decoration: none;
-    color: var(--slider-main);
+    color: var(--accent-main);
     transition: 0.4s;
 }
 
@@ -143,6 +143,7 @@ a,
     z-index: 0;
     height: 100%;
     pointer-events: none;
+    cursor: grab;
 }
 
 /* ::before element to replace the slider track */
@@ -152,14 +153,14 @@ a,
     position: absolute;
     width: var(--ProgressPercent, 100%);
     height: 100%;
-    background: var(--slider-main);
+    background: var(--accent-main);
     border-radius: 999px;
 }
 
 /* `::-webkit-slider-runnable-track` targets the track (background) of a range slider in chrome and safari browsers. */
 .custom-slider input[type="range"]::-webkit-slider-runnable-track {
     appearance: none;
-    background: var(--slider-background);
+    background: var(--accent-dim);
     height: var(--trackHeight);
     border-radius: 999px;
 }
@@ -169,8 +170,8 @@ a,
     width: var(--thumbRadius);
     height: var(--thumbRadius);
     margin-top: calc((var(--trackHeight) - var(--thumbRadius)) / 2);
-    background: var(--slider-main);
-    border: 1px solid var(--slider-main);
+    background: var(--accent-main);
+    border: 1px solid var(--accent-main);
     border-radius: 999px;
     pointer-events: all;
     appearance: none;
@@ -180,7 +181,7 @@ a,
 /* `::-moz-range-track` targets the track (background) of a range slider in Mozilla Firefox. */
 .custom-slider.default input[type="range"]::-moz-range-track {
     appearance: none;
-    background: var(--slider-background);
+    background: var(--accent-dim);
     height: var(--trackHeight);
     border-radius: 999px;
 }
@@ -191,8 +192,8 @@ a,
     width: var(--thumbRadius);
     height: var(--thumbRadius);
     margin-top: calc((var(--trackHeight) - var(--thumbRadius)) / 2);
-    background: var(--slider-main);
-    border: 1px solid var(--slider-main);
+    background: var(--accent-main);
+    border: 1px solid var(--accent-main);
     border-radius: 999px;
     pointer-events: all;
     appearance: none;
@@ -202,7 +203,7 @@ a,
 .custom-slider.minmax {
     position: relative;
     height: var(--trackHeight);
-    background: var(--slider-background);
+    background: var(--accent-dim);
     border-radius: 999px;
     margin: 0.5rem 0;
     --progressLeft: 0%;
@@ -220,7 +221,7 @@ a,
 .custom-slider .minmax-indicator::before {
     content: "";
     position: absolute;
-    background: var(--slider-main);
+    background: var(--accent-main);
     height: 100%;
     left: var(--progressLeft);
     right: calc(var(--progressRight) - var(--thumbRadius));

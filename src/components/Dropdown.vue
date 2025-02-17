@@ -23,10 +23,13 @@ const toggleDropdown = () => {
 const selectOption = (option: string) => {
     selectedOption.value = option;
     isDropdownOpen.value = false;
+    toggleDropdown();
 };
 
-if (props.default != null)
+if (props.default != null) {
     selectOption(props.options[props.default]);
+    toggleDropdown();
+}
 </script>
 
 <template>
@@ -44,13 +47,14 @@ if (props.default != null)
 .container {
     position: relative;
     border: 1px solid var(--text-color-main);
+    border-radius: 5px;
     background-color: var(--background-color-main);
     min-width: 100%;
+    cursor: pointer;
 }
 
 .dropdown-button {
     padding: 5px;
-    cursor: pointer;
 }
 
 .dropdown-list {

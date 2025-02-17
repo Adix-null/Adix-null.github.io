@@ -3,8 +3,9 @@
 	--background-color-alt: hsl(0, 0%, 18%);
 	--background-color-hover: hsl(0, 0%, 60%);
 	--text-color-main: hsl(0, 0%, 94%);
-	--slider-background: #005a3c;
-	--slider-main: #00865a;
+	--accent-dim: #005a3c;
+	--accent-main: #00865a;
+	--accent-highlight: #00a870;
 
 	font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 	line-height: 1.5;
@@ -22,6 +23,9 @@
 body {
 	margin: 0px;
 }
+label {
+	cursor: auto;
+}
 #app {
 	display: flex;
 	flex-direction: column;
@@ -33,6 +37,16 @@ body {
 }
 button {
 	all: unset;
+	cursor: pointer;
+}
+.coloredButton {
+	background: var(--accent-main);
+	padding: 0.25em 1em;
+	border-radius: 5px;
+	font-size: large;
+}
+.coloredButton:hover {
+	background: var(--accent-highlight);
 }
 
 @media (prefers-color-scheme: light) {

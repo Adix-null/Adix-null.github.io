@@ -47,7 +47,7 @@ onMounted(async () => {
   try {
     const response = await fetch('/tradeuptest.json');
     const data = await response.json();
-    tradeups.value = data.slice(0, 20);
+    tradeups.value = data.slice(0, 100);
   } catch (error) {
     console.error('Failed to load JSON:', error);
   }
@@ -101,6 +101,11 @@ const sortedTradeups = computed(() => {
 
   <div id="main">
     <div id="filter">
+      <form class="category" id="updateButtons">
+        <button type="reset" class="coloredButton">Reset</button>
+        <button type="button" class="coloredButton">Search</button>
+      </form>
+
       <form class="category">
         <label for="search_name">Item Name</label>
         <br />
@@ -202,6 +207,12 @@ const sortedTradeups = computed(() => {
 
 .category>label {
   font-size: 1.5em;
+}
+
+#updateButtons {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 input[type=checkbox] {

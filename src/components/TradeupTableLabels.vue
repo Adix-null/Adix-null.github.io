@@ -2,7 +2,7 @@
 import { ref, defineEmits } from 'vue';
 
 // Define state: 0 (neutral), 1 (expanded ▲), -1 (collapsed ▼)
-const states = ref<number[]>([0, 0, 0, 1, 0, 0, 0, 0]);
+const states = ref<number[]>([0, 0, 0, 0, 1, 0, 0, 0, 0]);
 
 const props = defineProps<{
     labels: String[]

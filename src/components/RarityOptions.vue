@@ -5,6 +5,10 @@ const props = defineProps<{
 
 }>();
 
+const emit = defineEmits<{
+    (event: 'raritiesChosen', rarities: String[]): void;
+}>();
+
 </script>
 
 <template id="container">
