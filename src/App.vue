@@ -12,6 +12,13 @@ import TradeupTableLabels from './components/TradeupTableLabels.vue';
 import { type Tradeup, type Range, type Prices, rarityDictionary } from '../tradeuptracker/types.ts';
 
 const tradeups = ref<Tradeup[]>([]);
+const tradeupsQueried = ref<Tradeup[]>([]);
+
+const condFloatMin = ref(0);
+const condFloatMax = ref(1);
+const raritesChosen = ref<String[]>([]);
+const collectionChosen = ref<String>("");
+const selectedPriceOption = "pricelatest";
 
 const floatSliderMin = ref(0);
 const floatSliderMax = ref(1);
@@ -28,41 +35,40 @@ const liquiditySliderMax = ref(100);
 
 const tableLabels: String[] = ['Rarity', 'Item Name', 'Outcomes', 'Price', 'Profit', 'Profit Chance', 'Float', 'Availability', '24h Volume'];
 
-const selectedPriceOption = "pricelatest";
 const priceOptions = ref<string[]>(['latest', 'average', 'median']);
 
-
 const collectionOptions = ref<string[]>(['Any', 'The eSports Summer 2014 collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection']);
-
-const condFloatMin = ref(0);;
-const condFloatMax = ref(0);;
-
-const onSetFloat = (floatSliderMin: number, floatSliderMax: number) => {
-  condFloatMin.value = floatSliderMin;
-  condFloatMax.value = floatSliderMax;
-  console.log(condFloatMin.value);
-};
 
 onMounted(async () => {
   try {
     const response = await fetch('/tradeuptest.json');
     const data = await response.json();
-    tradeups.value = data.slice(0, 100);
+    tradeups.value = data.slice(0, 300);
+    tradeupsQueried.value = tradeups.value;
   } catch (error) {
     console.error('Failed to load JSON:', error);
   }
 });
 
-const sortState = ref<{ index: number; direction: number }>({ index: -1, direction: 0 });
-
-const onSort = (index: number, state: number) => {
-  sortState.value = { index, direction: state };
+const onChosenRarity = (rarities: String[]) => {
+  raritesChosen.value = rarities;
 };
 
-const sortedTradeups = computed(() => {
-  if (sortState.value.direction === 0) return tradeups.value; // Neutral state
+const onSetFloat = (floatSliderMin: number, floatSliderMax: number) => {
+  condFloatMin.value = floatSliderMin;
+  condFloatMax.value = floatSliderMax;
+};
 
-  return [...tradeups.value].sort((a, b) => {
+const sortState = ref<{ index: number; direction: number }>({ index: -1, direction: 0 });
+const onSort = (index: number, state: number) => {
+  sortState.value = { index, direction: state };
+  sortTradeups(tradeupsQueried);
+};
+
+const sortTradeups = (tradeupList: Ref<Tradeup[]>) => {
+  if (sortState.value.direction === 0) return tradeupList.value; // Neutral state
+
+  tradeupList.value = [...tradeupList.value].sort((a, b) => {
     const fieldMapA = [
       rarityDictionary[a.rarity],
       a.inputs[0].name,
@@ -92,8 +98,28 @@ const sortedTradeups = computed(() => {
     else
       return 0;
   });
-});
+};
 
+
+const onSubmitQuery = () => {
+  tradeupsQueried.value = tradeups.value;
+
+  tradeupsQueried.value = tradeupsQueried.value.filter(tradeup => {
+    let include = true;
+
+    if (tradeup.max_required_float > floatSliderMax.value || tradeup.max_required_float < floatSliderMin.value) {
+      return false;
+    }
+    if (!(raritesChosen.value.includes("Any") || raritesChosen.value.length === 0)) {
+      return raritesChosen.value.includes(tradeup.rarity);
+    }
+
+    return true;
+  });
+
+  sortTradeups(tradeupsQueried);
+
+}
 </script>
 
 <template>
@@ -103,7 +129,7 @@ const sortedTradeups = computed(() => {
     <div id="filter">
       <form class="category" id="updateButtons">
         <button type="reset" class="coloredButton">Reset</button>
-        <button type="button" class="coloredButton">Search</button>
+        <button type="button" class="coloredButton" @click="onSubmitQuery">Search</button>
       </form>
 
       <form class="category">
@@ -128,7 +154,7 @@ const sortedTradeups = computed(() => {
 
       <div id="search_rarities" class="category">
         <label>Rarity</label>
-        <RarityOptions />
+        <RarityOptions @rarities-chosen="onChosenRarity" />
       </div>
 
       <br />
@@ -171,8 +197,8 @@ const sortedTradeups = computed(() => {
       </div>
 
       <div id="item-list">
-        <TradeupSlot v-for="(tradeup, index) in sortedTradeups" :key="index" :even="(index % 2) == 0" :tradeup="tradeup"
-          :selectedPrice="selectedPriceOption" />
+        <TradeupSlot v-for="(tradeup, index) in tradeupsQueried" :key="index" :even="(index % 2) == 0"
+          :tradeup="tradeup" :selectedPrice="selectedPriceOption" />
       </div>
     </div>
   </div>

@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { ref, type Ref } from 'vue';
-import { rangeDictionary, shorthandKeys } from '../../tradeuptracker/types.ts';
+import { rangeDictionaryShortNames, shorthandKeys } from '../../tradeuptracker/types.ts';
 
 const emit = defineEmits<{
     (event: "updateFloatSlider", floatSliderMin: number, floatSliderMax: number): void;
 }>();
 
 const setFloatBounds = (quality: string) => {
-    let floatSliderMin = rangeDictionary[quality as (typeof shorthandKeys)[number]].min;
-    let floatSliderMax = rangeDictionary[quality as (typeof shorthandKeys)[number]].max;
+    let floatSliderMin = rangeDictionaryShortNames[quality as (typeof shorthandKeys)[number]].min;
+    let floatSliderMax = rangeDictionaryShortNames[quality as (typeof shorthandKeys)[number]].max;
     emit('updateFloatSlider', floatSliderMin, floatSliderMax);
 }
 </script>

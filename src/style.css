@@ -7,7 +7,7 @@
 	--accent-main: #00865a;
 	--accent-highlight: #00a870;
 
-	font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+	font-family: Barlow;
 	line-height: 1.5;
 	font-weight: 400;
 
@@ -19,6 +19,10 @@
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
+}
+@font-face {
+	font-family: Barlow;
+	src: url("assets/Barlow/Barlow-Regular.ttf");
 }
 body {
 	margin: 0px;
@@ -47,6 +51,9 @@ button {
 }
 .coloredButton:hover {
 	background: var(--accent-highlight);
+}
+.coloredButton:active {
+	background: var(--accent-main);
 }
 
 @media (prefers-color-scheme: light) {

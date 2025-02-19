@@ -7,7 +7,7 @@ import {
 	Tradeup,
 	priceTypeNames,
 	raritiesOrder,
-	ranges,
+	rangeDictionaryLongName,
 } from "./types.ts";
 
 const priceUrl: URL = new URL(
@@ -26,7 +26,7 @@ const epsilon: number = 0.000001;
 const fee: number = 13;
 
 const price_type: string = priceTypeNames[0];
-const fetch_web: boolean = false;
+const fetch_web: boolean = true;
 
 processItems();
 
@@ -77,7 +77,7 @@ async function processItems() {
 		await Deno.writeTextFile(tradeupPath, JSON.stringify(tradeupList));
 		console.log("File written successfully!");
 
-		await Deno.writeTextFile(tradeupPathTest, JSON.stringify(tradeupList.slice(120, 150)));
+		await Deno.writeTextFile(tradeupPathTest, JSON.stringify(tradeupList.slice(0, 300)));
 
 		console.log((Date.now() - start) / 1000 + "s");
 	} catch (error) {
@@ -225,7 +225,7 @@ function expandItemsByFloatRanges(collections: GroupedRaritiesInfo[]): GroupedRa
 			[...collection.rarities.entries()].map(([rarity, items]) => [
 				rarity,
 				items.flatMap((item) => {
-					return ranges
+					return rangeDictionaryLongName
 						.filter((range: Range) => item.max_float > range.min && item.min_float < range.max)
 						.map((range) => ({
 							...item,
@@ -353,7 +353,7 @@ function calculateTradeupRequirements(
 			const requiredFloats = new Set<number>();
 
 			items.forEach((item) => {
-				const qualityFloat = ranges.find((range) => range.name === item.float_category)?.max ?? 0;
+				const qualityFloat = rangeDictionaryLongName.find((range) => range.name === item.float_category)?.max ?? 0;
 				const { min_float, max_float } = item;
 				const maxRequiredFloat = (Math.min(qualityFloat, max_float) - min_float) / (max_float - min_float);
 				requiredFloats.add(maxRequiredFloat);
@@ -400,7 +400,7 @@ function findCheapestItem(
 		if (!itemsOfRarity) return null;
 
 		const matchingItems = itemsOfRarity.filter((item) => {
-			const floatRange = ranges.find((range) => range.name === item.float_category);
+			const floatRange = rangeDictionaryLongName.find((range) => range.name === item.float_category);
 			return floatRange && max_required_float > floatRange.min;
 		});
 
@@ -412,13 +412,14 @@ function findCheapestItem(
 		if (!cheapestItem) return null;
 
 		let max_required_float_correct = max_required_float;
-		const floatRange: Range = ranges.find((range) => range.name === cheapestItem.float_category) ?? ranges[0];
+		const floatRange: Range =
+			rangeDictionaryLongName.find((range) => range.name === cheapestItem.float_category) ?? rangeDictionaryLongName[0];
 		if (max_required_float < floatRange?.min || max_required_float > floatRange?.max) {
 			max_required_float_correct = Math.min(floatRange?.max ?? 0, cheapestItem.max_float);
 		}
 
 		max_required_float_correct -= epsilon;
-		const rangeScarcity = ranges.find(
+		const rangeScarcity = rangeDictionaryLongName.find(
 			(range) => max_required_float_correct > range.min && max_required_float_correct <= range.max
 		);
 		const floatScarcity: number =
@@ -473,7 +474,7 @@ function calculateTradeupOutcomes(tradeups: Tradeup[], groupedItems: GroupedRari
 				const expectedFloat = max_required_float * (skin.max_float - skin.min_float) + skin.min_float;
 
 				// Get the float category from the range dictionary
-				const floatCategory = ranges.find((range) => range.name === skin.float_category);
+				const floatCategory = rangeDictionaryLongName.find((range) => range.name === skin.float_category);
 
 				// Ensure the float is within the valid range
 				if (!floatCategory) return null;
