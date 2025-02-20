@@ -6,14 +6,16 @@ import Footer_info from './components/Footer.vue'
 import Dropdown from './components/Dropdown.vue';
 import SliderRange from './components/SliderRange.vue';
 import FloatConditionButtons from './components/FloatConditionButtons.vue';
-import RarityOptions from './components/RarityOptions.vue';
+import CheckBoxes from './components/Checkboxes.vue';
 import TradeupTableLabels from './components/TradeupTableLabels.vue';
 
-import { type Tradeup, type Range, type Prices, rarityDictionary } from '../tradeuptracker/types.ts';
+import { type Tradeup, type Range, type Prices, rarityDictionary, raritiesOrder } from '../tradeuptracker/types.ts';
 
 const tradeups = ref<Tradeup[]>([]);
 const tradeupsQueried = ref<Tradeup[]>([]);
 
+const stattrakState = ref(true);
+const normalState = ref(true);
 const condFloatMin = ref(0);
 const condFloatMax = ref(1);
 const raritesChosen = ref<String[]>([]);
@@ -57,8 +59,13 @@ watch(() => floatSliderMax.value, (newValue) => {
   condFloatMax.value = newValue;
 });
 
-const onChosenRarity = (rarities: String[]) => {
-  raritesChosen.value = rarities;
+const onChosenName = (options: String[]) => {
+  //if (options == "Both")
+  //console.log(options);
+}
+
+const onChosenRarity = (options: String[]) => {
+  raritesChosen.value = options;
 };
 
 const onSetFloat = (floatSliderMin: number, floatSliderMax: number) => {
@@ -107,19 +114,41 @@ const sortTradeups = (tradeupList: Ref<Tradeup[]>) => {
   });
 };
 
-
 const onSubmitQuery = () => {
   tradeupsQueried.value = tradeups.value;
 
   tradeupsQueried.value = tradeupsQueried.value.filter(tradeup => {
-    let include = true;
-
     if (tradeup.max_required_float > floatSliderMax.value || tradeup.max_required_float < floatSliderMin.value) {
       return false;
     }
+
     if (!(raritesChosen.value.includes("Any") || raritesChosen.value.length === 0)) {
-      return raritesChosen.value.includes(tradeup.rarity);
+      if (!raritesChosen.value.includes(tradeup.rarity)) {
+        return false;
+      }
     }
+
+    if (tradeup.inputs[0].prices[selectedPriceOption] > priceSliderMax.value || tradeup.inputs[0].prices[selectedPriceOption] < priceSliderMin.value) {
+      return false;
+    }
+
+    if (tradeup.expected_value! > profitSliderMax.value || tradeup.expected_value! < profitSliderMin.value) {
+      return false;
+    }
+
+    if (tradeup.profit_chance > chanceSliderMax.value || tradeup.profit_chance < chanceSliderMin.value) {
+      return false;
+    }
+
+    if (tradeup.availability > availabilitySliderMax.value || tradeup.availability < availabilitySliderMin.value) {
+      return false;
+    }
+
+    if (tradeup.inputs[0].volume24h > liquiditySliderMax.value || tradeup.inputs[0].volume24h < liquiditySliderMin.value) {
+      return false;
+    }
+
+
 
     return true;
   });
@@ -135,7 +164,7 @@ const onSubmitQuery = () => {
   <div id="main">
     <div id="filter">
       <form class="category" id="updateButtons">
-        <button type="reset" class="coloredButton">Reset</button>
+        <button type="submit" class="coloredButton">Reset</button>
         <button type="button" class="coloredButton" @click="onSubmitQuery">Search</button>
       </form>
 
@@ -143,7 +172,8 @@ const onSubmitQuery = () => {
         <label for="search_name">Item Name</label>
         <br />
         <input type="text" id="search_name" name="search_name">
-        <input type="checkbox" id="stattrak_cb">StatTrak™</input>
+        <CheckBoxes v-on:['nameFieldChosen']="onChosenName" message="nameFieldChosen" :options="['Normal', 'StatTrak™']"
+          :check-normals="true" />
       </form>
 
       <div class="category">
@@ -162,7 +192,8 @@ const onSubmitQuery = () => {
 
       <div id="search_rarities" class="category">
         <label>Rarity</label>
-        <RarityOptions @rarities-chosen="onChosenRarity" />
+        <CheckBoxes v-on:['raritiesChosen']="onChosenRarity" message="raritiesChosen" special="Any"
+          :options="raritiesOrder.slice(0, -1).reverse()" :check-normals="false" />
       </div>
 
       <br />
@@ -224,7 +255,7 @@ const onSubmitQuery = () => {
 }
 
 #filter {
-  min-width: fit-content;
+  min-width: 200px;
   height: 100%;
   padding: 0em 1em;
   display: flex;
@@ -235,7 +266,7 @@ const onSubmitQuery = () => {
 }
 
 .category {
-  margin-top: 1.5em;
+  margin-top: 1em;
   width: 100%;
 }
 
