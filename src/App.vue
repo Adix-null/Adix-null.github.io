@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, type Ref } from 'vue';
+import { computed, onMounted, ref, watch, type Ref } from 'vue';
 import TradeupSlot from './components/TradeupSlot.vue';
 import Navbar from './components/Navbar.vue';
 import Footer_info from './components/Footer.vue'
@@ -48,6 +48,13 @@ onMounted(async () => {
   } catch (error) {
     console.error('Failed to load JSON:', error);
   }
+});
+
+watch(() => floatSliderMin.value, (newValue) => {
+  condFloatMin.value = newValue;
+});
+watch(() => floatSliderMax.value, (newValue) => {
+  condFloatMax.value = newValue;
 });
 
 const onChosenRarity = (rarities: String[]) => {
@@ -141,8 +148,9 @@ const onSubmitQuery = () => {
 
       <div class="category">
         <label>Float needed</label>
-        <SliderRange :min="0" :max="1" :step="0.001" v-model:min-value="floatSliderMin"
-          v-model:max-value="floatSliderMax" v-model:set-min="condFloatMin" v-model:set-max="condFloatMax" />
+        <SliderRange :min="0" :max="1" :step="0.001" v-model:min-value.number="floatSliderMin"
+          v-model:max-value.number="floatSliderMax" v-model:set-min.number="condFloatMin"
+          v-model:set-max.number="condFloatMax" />
         <FloatConditionButtons :float-slider-min="floatSliderMin" :float-slider-max="floatSliderMax"
           @updateFloatSlider="onSetFloat" />
       </div>
@@ -161,33 +169,33 @@ const onSubmitQuery = () => {
       <div id="search_price" class="category">
         <label>Price</label>
         <Dropdown :options="priceOptions" :default="0" />
-        <SliderRange :min="0" :max="100" :step="0.01" v-model:min-value="priceSliderMin"
-          v-model:max-value="priceSliderMax" />
+        <SliderRange :min="0" :max="100" :step="0.01" v-model:min-value.number="priceSliderMin"
+          v-model:max-value.number="priceSliderMax" />
       </div>
 
       <div id="profit_search" class="category">
         <label>Profit</label>
         <input type="checkbox" id="checkbox_pc">Percent</input>
-        <SliderRange :min="0" :max="100" :step="0.01" v-model:min-value="profitSliderMin"
-          v-model:max-value="profitSliderMax" />
+        <SliderRange :min="0" :max="100" :step="0.01" v-model:min-value.number="profitSliderMin"
+          v-model:max-value.number="profitSliderMax" />
       </div>
 
       <div class="category">
         <label>Profit Chance</label>
-        <SliderRange :min="0" :max="100" :step="1" v-model:min-value="chanceSliderMin"
-          v-model:max-value="chanceSliderMax" />
+        <SliderRange :min="0" :max="100" :step="1" v-model:min-value.number="chanceSliderMin"
+          v-model:max-value.number="chanceSliderMax" />
       </div>
 
       <div class="category">
         <label>Availability</label>
-        <SliderRange :min="0" :max="100" :step="0.1" v-model:min-value="availabilitySliderMin"
-          v-model:max-value="availabilitySliderMax" />
+        <SliderRange :min="0" :max="100" :step="0.1" v-model:min-value.number="availabilitySliderMin"
+          v-model:max-value.number="availabilitySliderMax" />
       </div>
 
       <div class="category">
         <label>Liquidity</label>
-        <SliderRange :min="0" :max="100" :step="1" v-model:min-value="liquiditySliderMin"
-          v-model:max-value="liquiditySliderMax" />
+        <SliderRange :min="0" :max="100" :step="1" v-model:min-value.number="liquiditySliderMin"
+          v-model:max-value.number="liquiditySliderMax" />
       </div>
     </div>
 

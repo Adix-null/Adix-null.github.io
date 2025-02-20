@@ -48,9 +48,9 @@ const setCSSProps = (left: number, right: number) => {
 
 //Update values automatically
 watch(() => props.setMin, (newValue) => {
+    console.log(newValue);
     if (newValue !== undefined) {
         sliderMinValue.value = newValue;
-        console.log(newValue);
     }
 });
 watch(() => props.setMax, (newValue) => {
