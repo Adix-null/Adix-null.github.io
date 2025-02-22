@@ -60,8 +60,21 @@ watch(() => floatSliderMax.value, (newValue) => {
 });
 
 const onChosenName = (options: String[]) => {
-  //if (options == "Both")
-  //console.log(options);
+  normalState.value = false;
+  stattrakState.value = false;
+
+  if (options[0] === "*") {
+    normalState.value = true;
+    stattrakState.value = true;
+  }
+  else {
+    if (options.includes("StatTrak™")) {
+      stattrakState.value = true;
+    }
+    if (options.includes("Normal")) {
+      normalState.value = true;
+    }
+  }
 }
 
 const onChosenRarity = (options: String[]) => {
@@ -118,6 +131,12 @@ const onSubmitQuery = () => {
   tradeupsQueried.value = tradeups.value;
 
   tradeupsQueried.value = tradeupsQueried.value.filter(tradeup => {
+
+    if (normalState.value == false && tradeup.inputs[0].stattrak == false || stattrakState.value == false && tradeup.inputs[0].stattrak == true) {
+      return false;
+    }
+
+
     if (tradeup.max_required_float > floatSliderMax.value || tradeup.max_required_float < floatSliderMin.value) {
       return false;
     }
