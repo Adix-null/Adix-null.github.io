@@ -41,10 +41,12 @@ h2 {
 }
 
 #currency {
+    visibility: hidden;
     margin: 0px 20px
 }
 
 #links-container {
+    visibility: hidden;
     display: flex;
     flex-direction: row;
     margin-left: auto;

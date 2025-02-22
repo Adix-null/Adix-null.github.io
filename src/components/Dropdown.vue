@@ -2,23 +2,22 @@
 import { ref } from 'vue';
 import '../style.css'
 
-const props = defineProps({
-    options: {
-        type: Array as () => string[],
-        required: true,
-    },
-    default: {
-        type: Number,
-        required: false
-    }
-});
+const props = defineProps<{
+    options: string[],
+    default?: number,
+    selected?: string
+}>();
 
 const isDropdownOpen = ref(false);
-const selectedOption = ref<string | null>(null);
+const selectedOption = ref(props.selected);
 
 const toggleDropdown = () => {
     isDropdownOpen.value = !isDropdownOpen.value;
 };
+
+const emit = defineEmits<{
+    (event: "", value: number): void;
+}>();
 
 const selectOption = (option: string) => {
     selectedOption.value = option;
@@ -34,7 +33,7 @@ if (props.default != null) {
 
 <template>
     <div class="container" @click="toggleDropdown">
-        <button class="dropdown-button">{{ selectedOption || 'Select Option' }}</button>
+        <button class="dropdown-button">{{ selectedOption || '...' }}</button>
         <ul v-if="isDropdownOpen" class="dropdown-list">
             <li v-for="option in options" :key="option" @click="selectOption(option)" class="dropdown-item">
                 {{ option }}
@@ -49,17 +48,22 @@ if (props.default != null) {
     border: 1px solid var(--text-color-main);
     border-radius: 5px;
     background-color: var(--background-color-main);
-    min-width: 100%;
+    max-width: 200px;
     cursor: pointer;
 }
 
 .dropdown-button {
+    max-width: 90%;
     padding: 5px;
+    white-space: nowrap;
+    text-overflow: clip;
+    overflow: hidden;
 }
 
 .dropdown-list {
     position: absolute;
     width: max-content;
+    max-width: 200px;
     top: 100%;
     left: 0;
     right: 0;

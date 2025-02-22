@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch, type Ref } from 'vue';
+import { onMounted, ref, watch, type Ref } from 'vue';
 import TradeupSlot from './components/TradeupSlot.vue';
 import Navbar from './components/Navbar.vue';
 import Footer_info from './components/Footer.vue'
@@ -14,13 +14,15 @@ import { type Tradeup, type Range, type Prices, rarityDictionary, raritiesOrder 
 const tradeups = ref<Tradeup[]>([]);
 const tradeupsQueried = ref<Tradeup[]>([]);
 
+const searchName = ref('');
 const stattrakState = ref(true);
 const normalState = ref(true);
 const condFloatMin = ref(0);
 const condFloatMax = ref(1);
 const raritesChosen = ref<String[]>([]);
-const collectionChosen = ref<String>("");
-const selectedPriceOption = "pricelatest";
+const collectionChosen = ref("");
+const selectedPriceOption = ref("pricelatest");
+const profitPercent = ref(true);
 
 const floatSliderMin = ref(0);
 const floatSliderMax = ref(1);
@@ -37,9 +39,27 @@ const liquiditySliderMax = ref(100);
 
 const tableLabels: String[] = ['Rarity', 'Item Name', 'Outcomes', 'Price', 'Profit', 'Profit Chance', 'Float', 'Availability', '24h Volume'];
 
-const priceOptions = ref<string[]>(['latest', 'average', 'median']);
+const priceOptions = ref<string[]>([
+  'pricelatest',
+  'pricelatestsell',
+  'pricelatestsell24h',
+  'pricelatestsell7d',
+  'pricemedian',
+  'pricemedian24h',
+  'pricemedian7d',
+  'priceavg',
+  'priceavg24h',
+  'priceavg7d',
+  'pricesafe',
+  'pricemin',
+  'pricemax',
+  'buyorderprice',
+  'sold24h',
+  'sold7d',
+  'offervolume'
+]);
 
-const collectionOptions = ref<string[]>(['Any', 'The eSports Summer 2014 collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection']);
+const collectionOptions = ref<string[]>(['Any', 'The eSports Summer 2014 collection', 'The 2021 Overpass collection', 'The 2The 2021 OverpassThe 2021 Overpass021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection']);
 
 onMounted(async () => {
   try {
@@ -51,6 +71,7 @@ onMounted(async () => {
     console.error('Failed to load JSON:', error);
   }
 });
+
 
 watch(() => floatSliderMin.value, (newValue) => {
   condFloatMin.value = newValue;
@@ -100,7 +121,7 @@ const sortTradeups = (tradeupList: Ref<Tradeup[]>) => {
       rarityDictionary[a.rarity],
       a.inputs[0].name,
       a.outcomes!.length,
-      a.inputs[0].prices[selectedPriceOption],
+      a.inputs[0].prices[selectedPriceOption.value],
       a.expected_value!,
       a.profit_chance,
       a.max_required_float,
@@ -111,7 +132,7 @@ const sortTradeups = (tradeupList: Ref<Tradeup[]>) => {
       rarityDictionary[b.rarity],
       b.inputs[0].name,
       b.outcomes!.length,
-      b.inputs[0].prices[selectedPriceOption],
+      b.inputs[0].prices[selectedPriceOption.value],
       b.expected_value!,
       b.profit_chance,
       b.max_required_float,
@@ -132,12 +153,19 @@ const onSubmitQuery = () => {
 
   tradeupsQueried.value = tradeupsQueried.value.filter(tradeup => {
 
+    if (searchName.value && !tradeup.inputs[0].name.toLocaleLowerCase().includes(searchName.value.toLocaleLowerCase())) {
+      return false;
+    }
+
     if (normalState.value == false && tradeup.inputs[0].stattrak == false || stattrakState.value == false && tradeup.inputs[0].stattrak == true) {
       return false;
     }
 
-
     if (tradeup.max_required_float > floatSliderMax.value || tradeup.max_required_float < floatSliderMin.value) {
+      return false;
+    }
+
+    if (collectionChosen.value && !(tradeup.collection == collectionChosen.value)) {
       return false;
     }
 
@@ -147,12 +175,20 @@ const onSubmitQuery = () => {
       }
     }
 
-    if (tradeup.inputs[0].prices[selectedPriceOption] > priceSliderMax.value || tradeup.inputs[0].prices[selectedPriceOption] < priceSliderMin.value) {
+    if (tradeup.inputs[0].prices[selectedPriceOption.value] * 10 > priceSliderMax.value || tradeup.inputs[0].prices[selectedPriceOption.value] * 10 < priceSliderMin.value) {
       return false;
     }
 
-    if (tradeup.expected_value! > profitSliderMax.value || tradeup.expected_value! < profitSliderMin.value) {
-      return false;
+    if (profitPercent.value) {
+      const profitPercentage = 10 * tradeup.expected_value! / tradeup.inputs[0].prices[selectedPriceOption.value];
+      if (profitPercentage > profitSliderMax.value || profitPercentage < profitSliderMin.value) {
+        return false;
+      }
+    }
+    else {
+      if (tradeup.expected_value! > profitSliderMax.value || tradeup.expected_value! < profitSliderMin.value) {
+        return false;
+      }
     }
 
     if (tradeup.profit_chance > chanceSliderMax.value || tradeup.profit_chance < chanceSliderMin.value) {
@@ -166,8 +202,6 @@ const onSubmitQuery = () => {
     if (tradeup.inputs[0].volume24h > liquiditySliderMax.value || tradeup.inputs[0].volume24h < liquiditySliderMin.value) {
       return false;
     }
-
-
 
     return true;
   });
@@ -190,7 +224,8 @@ const onSubmitQuery = () => {
       <form class="category">
         <label for="search_name">Item Name</label>
         <br />
-        <input type="text" id="search_name" name="search_name">
+        <input type="text" @keydown.enter.prevent="onSubmitQuery" v-model="searchName" id="search_name"
+          name="search_name">
         <CheckBoxes v-on:['nameFieldChosen']="onChosenName" message="nameFieldChosen" :options="['Normal', 'StatTrak™']"
           :check-normals="true" />
       </form>
@@ -206,7 +241,7 @@ const onSubmitQuery = () => {
 
       <div class="category">
         <label>Collection</label>
-        <Dropdown :options="collectionOptions" :default="0" />
+        <Dropdown :options="collectionOptions" :default="0" v-model:selected.lazy="collectionChosen" />
       </div>
 
       <div id="search_rarities" class="category">
@@ -218,15 +253,15 @@ const onSubmitQuery = () => {
       <br />
       <div id="search_price" class="category">
         <label>Price</label>
-        <Dropdown :options="priceOptions" :default="0" />
+        <Dropdown :options="priceOptions" :default="0" v-model:selected="selectedPriceOption" />
         <SliderRange :min="0" :max="100" :step="0.01" v-model:min-value.number="priceSliderMin"
           v-model:max-value.number="priceSliderMax" />
       </div>
 
       <div id="profit_search" class="category">
         <label>Profit</label>
-        <input type="checkbox" id="checkbox_pc">Percent</input>
-        <SliderRange :min="0" :max="100" :step="0.01" v-model:min-value.number="profitSliderMin"
+        <input type="checkbox" id="checkbox_pc" v-model="profitPercent">Percent</input>
+        <SliderRange :min="-100" :max="100" :step="0.01" v-model:min-value.number="profitSliderMin"
           v-model:max-value.number="profitSliderMax" />
       </div>
 
@@ -301,6 +336,10 @@ const onSubmitQuery = () => {
 
 input[type=checkbox] {
   margin-left: 1em;
+}
+
+#search_name {
+  width: 100%;
 }
 
 #search_price>* {
