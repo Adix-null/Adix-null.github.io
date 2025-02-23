@@ -9,7 +9,7 @@ import FloatConditionButtons from './components/FloatConditionButtons.vue';
 import CheckBoxes from './components/Checkboxes.vue';
 import TradeupTableLabels from './components/TradeupTableLabels.vue';
 
-import { type Tradeup, type Range, type Prices, rarityDictionary, raritiesOrder } from '../tradeuptracker/types.ts';
+import { type Tradeup, type Range, type Prices, rarityDictionary, raritiesOrder, collectionNames, priceTypeNames } from '../tradeuptracker/types.ts';
 
 const tradeups = ref<Tradeup[]>([]);
 const tradeupsQueried = ref<Tradeup[]>([]);
@@ -20,7 +20,7 @@ const normalState = ref(true);
 const condFloatMin = ref(0);
 const condFloatMax = ref(1);
 const raritesChosen = ref<String[]>([]);
-const collectionChosen = ref("");
+const collectionChosen = ref<String>("");
 const selectedPriceOption = ref("pricelatest");
 const profitPercent = ref(true);
 
@@ -38,28 +38,6 @@ const liquiditySliderMin = ref(0);
 const liquiditySliderMax = ref(100);
 
 const tableLabels: String[] = ['Rarity', 'Item Name', 'Outcomes', 'Price', 'Profit', 'Profit Chance', 'Float', 'Availability', '24h Volume'];
-
-const priceOptions = ref<string[]>([
-  'pricelatest',
-  'pricelatestsell',
-  'pricelatestsell24h',
-  'pricelatestsell7d',
-  'pricemedian',
-  'pricemedian24h',
-  'pricemedian7d',
-  'priceavg',
-  'priceavg24h',
-  'priceavg7d',
-  'pricesafe',
-  'pricemin',
-  'pricemax',
-  'buyorderprice',
-  'sold24h',
-  'sold7d',
-  'offervolume'
-]);
-
-const collectionOptions = ref<string[]>(['Any', 'The eSports Summer 2014 collection', 'The 2021 Overpass collection', 'The 2The 2021 OverpassThe 2021 Overpass021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection', 'The 2021 Overpass collection']);
 
 onMounted(async () => {
   try {
@@ -101,6 +79,13 @@ const onChosenName = (options: String[]) => {
 const onChosenRarity = (options: String[]) => {
   raritesChosen.value = options;
 };
+
+const onChosenCollection = (option: String) => {
+  collectionChosen.value = option;
+};
+const onChosenPriceType = (option: String) => {
+  ;
+}
 
 const onSetFloat = (floatSliderMin: number, floatSliderMax: number) => {
   condFloatMin.value = floatSliderMin;
@@ -165,7 +150,7 @@ const onSubmitQuery = () => {
       return false;
     }
 
-    if (collectionChosen.value && !(tradeup.collection == collectionChosen.value)) {
+    if (collectionChosen.value && collectionChosen.value != "Any" && tradeup.collection.replace(" StatTrak™", "") != collectionChosen.value) {
       return false;
     }
 
@@ -241,7 +226,8 @@ const onSubmitQuery = () => {
 
       <div class="category">
         <label>Collection</label>
-        <Dropdown :options="collectionOptions" :default="0" v-model:selected.lazy="collectionChosen" />
+        <Dropdown v-on:['collectionChosen']="onChosenCollection" message="collectionChosen"
+          :options="(['Any', ...collectionNames.sort()])" :default="0" v-model:selected="collectionChosen" />
       </div>
 
       <div id="search_rarities" class="category">
@@ -253,7 +239,8 @@ const onSubmitQuery = () => {
       <br />
       <div id="search_price" class="category">
         <label>Price</label>
-        <Dropdown :options="priceOptions" :default="0" v-model:selected="selectedPriceOption" />
+        <!-- <Dropdown v-on:['onChosenPriceType']="onChosenPriceType" message="onChosenPriceType" :options="priceTypeNames"
+          :default="0" v-model:selected="selectedPriceOption" /> -->
         <SliderRange :min="0" :max="100" :step="0.01" v-model:min-value.number="priceSliderMin"
           v-model:max-value.number="priceSliderMax" />
       </div>

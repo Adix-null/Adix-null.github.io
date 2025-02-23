@@ -5,24 +5,25 @@ import '../style.css'
 const props = defineProps<{
     options: string[],
     default?: number,
-    selected?: string
+    message: string
 }>();
 
 const isDropdownOpen = ref(false);
-const selectedOption = ref(props.selected);
+const selectedOption = ref(props.options[props.default ?? 0]);
 
 const toggleDropdown = () => {
     isDropdownOpen.value = !isDropdownOpen.value;
 };
 
 const emit = defineEmits<{
-    (event: "", value: number): void;
+    (event: string, value: string): void;
 }>();
 
 const selectOption = (option: string) => {
     selectedOption.value = option;
     isDropdownOpen.value = false;
     toggleDropdown();
+    emit(props.message, selectedOption.value);
 };
 
 if (props.default != null) {
