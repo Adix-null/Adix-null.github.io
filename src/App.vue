@@ -26,7 +26,7 @@ const profitPercent = ref(true);
 
 const floatSliderMin = ref(0);
 const floatSliderMax = ref(1);
-const priceSliderMin = ref(0);
+const priceSliderMin = ref(0.1);
 const priceSliderMax = ref(100);
 const profitSliderMin = ref(0);
 const profitSliderMax = ref(100);
@@ -41,10 +41,11 @@ const tableLabels: String[] = ['Rarity', 'Item Name', 'Outcomes', 'Price', 'Prof
 
 onMounted(async () => {
   try {
-    const response = await fetch('/tradeuptest.json');
+    const response = await fetch('/tradeups.json');
     const data = await response.json();
-    tradeups.value = data.slice(0, 300);
+    tradeups.value = data;
     tradeupsQueried.value = tradeups.value;
+    onSubmitQuery();
   } catch (error) {
     console.error('Failed to load JSON:', error);
   }
@@ -164,7 +165,7 @@ const onSubmitQuery = () => {
       return false;
     }
 
-    if (profitPercent.value) {
+    if (profitPercent.value && profitSliderMax.value < 100) {
       const profitPercentage = 10 * tradeup.expected_value! / tradeup.inputs[0].prices[selectedPriceOption.value];
       if (profitPercentage > profitSliderMax.value || profitPercentage < profitSliderMin.value) {
         return false;
@@ -184,12 +185,14 @@ const onSubmitQuery = () => {
       return false;
     }
 
-    if (tradeup.inputs[0].volume24h > liquiditySliderMax.value || tradeup.inputs[0].volume24h < liquiditySliderMin.value) {
+    if (liquiditySliderMax.value < 100 && tradeup.inputs[0].volume24h > liquiditySliderMax.value || tradeup.inputs[0].volume24h < liquiditySliderMin.value) {
       return false;
     }
 
     return true;
   });
+
+  tradeupsQueried.value = tradeupsQueried.value.slice(0, 50);
 
   sortTradeups(tradeupsQueried);
 
