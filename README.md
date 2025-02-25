@@ -1,5 +1,16 @@
-# Vue 3 + TypeScript + Vite
+# TradeupTracker
+## A website to view computed tradeups with the latest prices 
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+Built with Vue 3 Composition + TypeScript + Vite + Deno 2
 
-Learn more about the recommended Project Setup and IDE Support in the [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).
+Will probably containerize the project soon but for now
+
+To build the project install the necessary deps and run
+### On Windows 
+```npm run dev```
+### On Linux 
+```deno run -A npm:vite```
+
+To compute the tradeup file run 
+<br>
+```deno run --allow-read --allow-write --allow-net tradeuptracker/logic.ts```
