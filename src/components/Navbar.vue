@@ -4,9 +4,10 @@ import logo from '../assets/tradeuptracker.svg';
 import Dropdown from './Dropdown.vue';
 
 const dropdownOptions = ref<string[]>(['USD', 'EUR', 'CNY']);
+const selectedCurrencyOption = ref<string>(dropdownOptions.value[0]);
 
-const onChosenCurrency = (option: String) => {
-    ;
+const onChosenCurrency = (option: string) => {
+    selectedCurrencyOption.value = option;
 };
 
 </script>

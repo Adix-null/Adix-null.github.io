@@ -43,7 +43,6 @@ async function processItems() {
 		console.log("Info read");
 
 		let GroupedInfo: any = groupItemsByCollection(skinsData);
-		console.log(GroupedInfo);
 		console.log("Gruouped by collection info");
 		GroupedInfo = groupItemsByRarity(GroupedInfo)
 			.filter((collection) => collection.rarities.size > 1)

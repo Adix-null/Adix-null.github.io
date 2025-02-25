@@ -5,7 +5,7 @@ import { ref, defineEmits } from 'vue';
 const states = ref<number[]>([0, 0, 0, 0, 1, 0, 0, 0, 0]);
 
 const props = defineProps<{
-    labels: String[]
+    labels: string[]
 }>();
 
 const emit = defineEmits<{

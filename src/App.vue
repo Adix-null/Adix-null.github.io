@@ -19,9 +19,9 @@ const stattrakState = ref(true);
 const normalState = ref(true);
 const condFloatMin = ref(0);
 const condFloatMax = ref(1);
-const raritesChosen = ref<String[]>([]);
-const collectionChosen = ref<String>("");
-const selectedPriceOption = ref("pricelatest");
+const raritesChosen = ref<string[]>([]);
+const collectionChosen = ref<string>("");
+const selectedPriceOption = ref<string>(priceTypeNames[0]);
 const profitPercent = ref(true);
 const pageNum = ref(0);
 const itemsPerPage = 30;
@@ -40,7 +40,7 @@ const availabilitySliderMax = ref(100);
 const liquiditySliderMin = ref(0);
 const liquiditySliderMax = ref(100);
 
-const tableLabels: String[] = ['Rarity', 'Item Name', 'Outcomes', 'Price', 'Profit', 'Profit Chance', 'Float', 'Availability', '24h Volume'];
+const tableLabels: string[] = ['Rarity', 'Item Name', 'Outcomes', 'Price', 'Profit', 'Profit Chance', 'Float', 'Availability', '24h Volume'];
 
 onMounted(async () => {
   try {
@@ -62,7 +62,7 @@ watch(() => floatSliderMax.value, (newValue) => {
   condFloatMax.value = newValue;
 });
 
-const onChosenName = (options: String[]) => {
+const onChosenName = (options: string[]) => {
   normalState.value = false;
   stattrakState.value = false;
 
@@ -80,16 +80,16 @@ const onChosenName = (options: String[]) => {
   }
 }
 
-const onChosenRarity = (options: String[]) => {
+const onChosenRarity = (options: string[]) => {
   raritesChosen.value = options;
 };
 
-const onChosenCollection = (option: String) => {
+const onChosenCollection = (option: string) => {
   collectionChosen.value = option;
 };
-const onChosenPriceType = (option: String) => {
-  ;
-}
+const onChosenPriceType = (option: string) => {
+  selectedPriceOption.value = option as string;
+};
 
 const onSetFloat = (floatSliderMin: number, floatSliderMax: number) => {
   condFloatMin.value = floatSliderMin;

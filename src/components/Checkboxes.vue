@@ -9,7 +9,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-    (event: String, options: String[]): void;
+    (event: string, options: string[]): void;
 }>();
 
 const checkboxes = ref<(HTMLInputElement | null)[]>([]);
