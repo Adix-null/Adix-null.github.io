@@ -26,7 +26,6 @@ const selectedPriceOption = ref<string>(priceTypeNames[0]);
 const profitPercent = ref(true);
 const currentPage = ref(1);
 const pageCount = ref(0);
-const itemsPerPage = 30;
 const totalItems = ref(0);
 
 const floatSliderMin = ref(0);
@@ -42,6 +41,7 @@ const availabilitySliderMax = ref(100);
 const liquiditySliderMin = ref(0);
 const liquiditySliderMax = ref(100);
 
+const itemsPerPage = 30;
 const tableLabels: string[] = ['Rarity', 'Item Name', 'Outcomes', 'Price', 'Profit', 'Profit Chance', 'Float', 'Availability', '24h Volume'];
 
 onMounted(async () => {
@@ -67,7 +67,7 @@ watch(() => floatSliderMax.value, (newValue) => {
 const onChosenPage = (num: number) => {
   currentPage.value = num;
   onSubmitQuery();
-}
+};
 
 const onChosenName = (options: string[]) => {
   normalState.value = false;
@@ -85,7 +85,7 @@ const onChosenName = (options: string[]) => {
       normalState.value = true;
     }
   }
-}
+};
 
 const onChosenRarity = (options: string[]) => {
   raritesChosen.value = options;
@@ -145,9 +145,13 @@ const sortTradeups = (tradeupList: Ref<Tradeup[]>) => {
   });
 };
 
+const onSearch = () => {
+  currentPage.value = 1;
+  onSubmitQuery();
+}
+
 const onSubmitQuery = () => {
   tradeupsQueried.value = tradeups.value;
-
   sortTradeups(tradeupsQueried);
 
   tradeupsQueried.value = tradeupsQueried.value.filter(tradeup => {
@@ -218,7 +222,7 @@ const onSubmitQuery = () => {
     <div id="filter">
       <form class="category" id="update-buttons">
         <button type="submit" class="coloredButton">Reset</button>
-        <button type="button" class="coloredButton" @click="onSubmitQuery">Search</button>
+        <button type="button" class="coloredButton" @click="onSearch">Search</button>
       </form>
 
       <form class="category">
@@ -296,7 +300,8 @@ const onSubmitQuery = () => {
           :tradeup="tradeup" :selectedPrice="selectedPriceOption" />
       </div>
 
-      <PageNumber :current-page="currentPage" :page-count="pageCount" @selected-page="onChosenPage" />
+      <PageNumber :current-page="currentPage" :page-count="pageCount" @selected-page="onChosenPage"
+        :set-value="currentPage" />
     </div>
   </div>
 

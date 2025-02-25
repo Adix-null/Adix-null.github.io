@@ -48,7 +48,6 @@ const setCSSProps = (left: number, right: number) => {
 
 //Update values automatically
 watch(() => props.setMin, (newValue) => {
-    console.log(newValue);
     if (newValue !== undefined) {
         sliderMinValue.value = newValue;
     }
@@ -56,7 +55,6 @@ watch(() => props.setMin, (newValue) => {
 watch(() => props.setMax, (newValue) => {
     if (newValue !== undefined) {
         sliderMaxValue.value = newValue;
-        console.log(newValue);
     }
 });
 // Watch effect to update emitted values and CSS variables when slider values change

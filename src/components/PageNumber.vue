@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import '../style.css'
 
 const props = defineProps<{
     pageCount: number,
     currentPage: number,
+    setValue?: number,
 }>();
 
 const emits = defineEmits<{
@@ -17,14 +18,18 @@ const changePageNum = (num: number) => {
     currentPageNum.value = num;
     emits('selectedPage', num);
 }
-
+watch(() => props.setValue, (newValue) => {
+    if (newValue !== undefined) {
+        currentPageNum.value = newValue;
+    }
+});
 </script>
 
 <template>
     <div id="container">
         <button v-if="pageCount > 0" @click="changePageNum(1)"
             :class="'page-number' + (currentPageNum === 1 ? ' highlight' : '')">1</button>
-        <button v-if="currentPageNum > 3" class="page-number">...</button>
+        <p v-if="currentPageNum > 3" class="page-number">...</p>
         <button v-if="currentPageNum > 2" @click="changePageNum(currentPageNum - 1)" class="page-number">{{
             currentPageNum - 1 }}</button>
         <button v-if="currentPageNum > 1 && currentPageNum < props.pageCount" @click="changePageNum(currentPageNum)"
@@ -32,7 +37,7 @@ const changePageNum = (num: number) => {
                 currentPageNum }}</button>
         <button v-if="currentPageNum < props.pageCount - 1" @click="changePageNum(currentPageNum + 1)"
             class="page-number">{{ currentPageNum + 1 }}</button>
-        <button v-if="currentPageNum < props.pageCount - 2" class="page-number">...</button>
+        <p v-if="currentPageNum < props.pageCount - 2" class="page-number">...</p>
         <button v-if="pageCount > 1" @click="changePageNum(props.pageCount)"
             :class="'page-number' + (currentPageNum === props.pageCount ? ' highlight' : '')">{{ props.pageCount
             }}</button>
@@ -51,9 +56,12 @@ const changePageNum = (num: number) => {
 }
 
 .page-number {
-    margin: 10px;
+    margin: 0.75em 0.25em;
     padding: 0.25em 0.75em;
-    background-color: var(--background-color-alt);
     border-radius: 2px;
+}
+
+button.page-number {
+    background-color: var(--background-color-alt);
 }
 </style>
