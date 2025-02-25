@@ -19,9 +19,6 @@ const infoPath: URL = new URL("./skins.json", import.meta.url);
 const tradeupPath: URL = new URL("../public/tradeups.json", import.meta.url);
 const tradeupPathTest: URL = new URL("../public/tradeuptest.json", import.meta.url);
 
-//deno run --allow-read --allow-write --allow-net tradeuptracker/logic.ts
-//TODO: unicode names dont work
-
 const epsilon: number = 0.000001;
 const fee: number = 13;
 

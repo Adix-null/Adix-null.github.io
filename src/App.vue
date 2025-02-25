@@ -23,6 +23,7 @@ const raritesChosen = ref<String[]>([]);
 const collectionChosen = ref<String>("");
 const selectedPriceOption = ref("pricelatest");
 const profitPercent = ref(true);
+const pageNum = ref(0);
 
 const floatSliderMin = ref(0);
 const floatSliderMax = ref(1);
@@ -68,7 +69,7 @@ const onChosenName = (options: String[]) => {
     stattrakState.value = true;
   }
   else {
-    if (options.includes("StatTrak™")) {
+    if (options.includes("StatTrak")) {
       stattrakState.value = true;
     }
     if (options.includes("Normal")) {
