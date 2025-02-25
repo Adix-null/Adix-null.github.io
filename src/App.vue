@@ -24,6 +24,8 @@ const collectionChosen = ref<String>("");
 const selectedPriceOption = ref("pricelatest");
 const profitPercent = ref(true);
 const pageNum = ref(0);
+const itemsPerPage = 30;
+const totalItems = ref(0);
 
 const floatSliderMin = ref(0);
 const floatSliderMax = ref(1);
@@ -193,10 +195,10 @@ const onSubmitQuery = () => {
     return true;
   });
 
-  tradeupsQueried.value = tradeupsQueried.value.slice(0, 50);
+  totalItems.value = tradeupsQueried.value.length;
+  tradeupsQueried.value = tradeupsQueried.value.slice(itemsPerPage * pageNum.value, Math.min(itemsPerPage * (pageNum.value + 1), totalItems.value));
 
   sortTradeups(tradeupsQueried);
-
 }
 </script>
 
