@@ -6,6 +6,7 @@
 	--accent-dim: #005a3c;
 	--accent-main: #00865a;
 	--accent-highlight: #00a870;
+	--accent-bright: #00b97b;
 
 	font-family: Barlow;
 	line-height: 1.5;
@@ -53,7 +54,7 @@ button {
 	background: var(--accent-highlight);
 }
 .coloredButton:active {
-	background: var(--accent-main);
+	background: var(--accent-bright);
 }
 
 @media (prefers-color-scheme: light) {

@@ -8,22 +8,24 @@ import SliderRange from './components/SliderRange.vue';
 import FloatConditionButtons from './components/FloatConditionButtons.vue';
 import CheckBoxes from './components/Checkboxes.vue';
 import TradeupTableLabels from './components/TradeupTableLabels.vue';
+import PageNumber from './components/PageNumber.vue';
 
 import { type Tradeup, type Range, type Prices, rarityDictionary, raritiesOrder, collectionNames, priceTypeNames } from '../tradeuptracker/types.ts';
 
 const tradeups = ref<Tradeup[]>([]);
 const tradeupsQueried = ref<Tradeup[]>([]);
 
-const searchName = ref('');
+const searchName = ref<string>('');
 const stattrakState = ref(true);
 const normalState = ref(true);
 const condFloatMin = ref(0);
 const condFloatMax = ref(1);
 const raritesChosen = ref<string[]>([]);
-const collectionChosen = ref<string>("");
+const collectionChosen = ref<string>('Any');
 const selectedPriceOption = ref<string>(priceTypeNames[0]);
 const profitPercent = ref(true);
-const pageNum = ref(0);
+const currentPage = ref(1);
+const pageCount = ref(0);
 const itemsPerPage = 30;
 const totalItems = ref(0);
 
@@ -62,6 +64,11 @@ watch(() => floatSliderMax.value, (newValue) => {
   condFloatMax.value = newValue;
 });
 
+const onChosenPage = (num: number) => {
+  currentPage.value = num;
+  onSubmitQuery();
+}
+
 const onChosenName = (options: string[]) => {
   normalState.value = false;
   stattrakState.value = false;
@@ -87,6 +94,7 @@ const onChosenRarity = (options: string[]) => {
 const onChosenCollection = (option: string) => {
   collectionChosen.value = option;
 };
+
 const onChosenPriceType = (option: string) => {
   selectedPriceOption.value = option as string;
 };
@@ -139,6 +147,8 @@ const sortTradeups = (tradeupList: Ref<Tradeup[]>) => {
 
 const onSubmitQuery = () => {
   tradeupsQueried.value = tradeups.value;
+
+  sortTradeups(tradeupsQueried);
 
   tradeupsQueried.value = tradeupsQueried.value.filter(tradeup => {
 
@@ -196,9 +206,8 @@ const onSubmitQuery = () => {
   });
 
   totalItems.value = tradeupsQueried.value.length;
-  tradeupsQueried.value = tradeupsQueried.value.slice(itemsPerPage * pageNum.value, Math.min(itemsPerPage * (pageNum.value + 1), totalItems.value));
-
-  sortTradeups(tradeupsQueried);
+  pageCount.value = Math.floor(totalItems.value / itemsPerPage);
+  tradeupsQueried.value = tradeupsQueried.value.slice(itemsPerPage * (currentPage.value - 1), Math.min(itemsPerPage * currentPage.value, totalItems.value));
 }
 </script>
 
@@ -207,16 +216,16 @@ const onSubmitQuery = () => {
 
   <div id="main">
     <div id="filter">
-      <form class="category" id="updateButtons">
+      <form class="category" id="update-buttons">
         <button type="submit" class="coloredButton">Reset</button>
         <button type="button" class="coloredButton" @click="onSubmitQuery">Search</button>
       </form>
 
       <form class="category">
-        <label for="search_name">Item Name</label>
+        <label for="search-name">Item Name</label>
         <br />
-        <input type="text" @keydown.enter.prevent="onSubmitQuery" v-model="searchName" id="search_name"
-          name="search_name">
+        <input type="text" @keydown.enter.prevent="onSubmitQuery" v-model="searchName" id="search-name"
+          name="search-name">
         <CheckBoxes v-on:['nameFieldChosen']="onChosenName" message="nameFieldChosen" :options="['Normal', 'StatTrak™']"
           :check-normals="true" />
       </form>
@@ -243,7 +252,7 @@ const onSubmitQuery = () => {
       </div>
 
       <br />
-      <div id="search_price" class="category">
+      <div id="search-price" class="category">
         <label>Price</label>
         <!-- <Dropdown v-on:['onChosenPriceType']="onChosenPriceType" message="onChosenPriceType" :options="priceTypeNames"
           :default="0" v-model:selected="selectedPriceOption" /> -->
@@ -286,6 +295,8 @@ const onSubmitQuery = () => {
         <TradeupSlot v-for="(tradeup, index) in tradeupsQueried" :key="index" :even="(index % 2) == 0"
           :tradeup="tradeup" :selectedPrice="selectedPriceOption" />
       </div>
+
+      <PageNumber :current-page="currentPage" :page-count="pageCount" @selected-page="onChosenPage" />
     </div>
   </div>
 
@@ -321,7 +332,7 @@ const onSubmitQuery = () => {
   font-size: 1.5em;
 }
 
-#updateButtons {
+#update-buttons {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -331,15 +342,15 @@ input[type=checkbox] {
   margin-left: 1em;
 }
 
-#search_name {
+#search-name {
   width: 100%;
 }
 
-#search_price>* {
+#search-price>* {
   display: inline;
 }
 
-#search_price>label {
+#search-price>label {
   margin-right: 0.5em;
 }
 
