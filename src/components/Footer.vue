@@ -19,6 +19,8 @@ import api_logo from '../assets/steamwebapi-logo.svg';
                 subject to volatile market fluctuations and may not be truthfully reflected in the data sources.
                 <br />
                 ©2025 TradeUptracker
+                <br />
+                Last update: 2025-03-03 01:15:45
             </p>
         </div>
         <div id="logos">
