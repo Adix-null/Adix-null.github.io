@@ -12,7 +12,7 @@ import {
 	ranges,
 } from "./types.ts";
 
-const STEAMWEBAPI_KEY = "72ZDY58DKG0WJNJ4"; //Deno.env.get("STEAMWEBAPI_KEY");
+const STEAMWEBAPI_KEY = Deno.args[0];
 
 const priceUrl: URL = new URL(
 	"https://www.steamwebapi.com/steam/api/items?key=" +
