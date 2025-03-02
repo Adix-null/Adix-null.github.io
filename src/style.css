@@ -61,6 +61,7 @@ button {
 @media (prefers-color-scheme: light) {
 	:root {
 		--text-color-main: hsl(0, 0%, 20%);
+		--backround-color-accent: hsl(0, 0%, 84%);
 		--background-color-main: hsl(0, 0%, 100%);
 		--background-color-alt: hsl(0, 0%, 91%);
 		--background-color-hover: hsl(0, 0%, 56%);
