@@ -1,4 +1,5 @@
 :root {
+	--backround-color-accent: hsl(0, 0%, 3%);
 	--background-color-main: hsl(0, 0%, 12%);
 	--background-color-alt: hsl(0, 0%, 18%);
 	--background-color-hover: hsl(0, 0%, 60%);
@@ -59,8 +60,9 @@ button {
 
 @media (prefers-color-scheme: light) {
 	:root {
-		--text-color-main: rgb(33, 53, 71);
+		--text-color-main: hsl(0, 0%, 20%);
 		--background-color-main: hsl(0, 0%, 100%);
+		--background-color-alt: hsl(0, 0%, 91%);
 		--background-color-hover: hsl(0, 0%, 56%);
 	}
 	a:hover {

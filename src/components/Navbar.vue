@@ -79,6 +79,6 @@ h2 {
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
-    background-color: black;
+    background-color: var(--backround-color-accent);
 }
 </style>

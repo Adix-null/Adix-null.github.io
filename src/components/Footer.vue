@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import personal_logo from '../assets/prf_pic_sq.png';
+//import personal_logo from '../assets/prf_pic_sq.png';
 import ts_logo from '../assets/Typescript-logo.png';
 import vite_logo from '../assets/Vitejs-logo.png';
 import vue_logo from '../assets/vue.svg';
@@ -40,7 +40,7 @@ import api_logo from '../assets/steamwebapi-logo.svg';
     width: 100%;
     box-sizing: border-box;
     max-height: 500px;
-    background-color: black;
+    background-color: var(--backround-color-accent);
 }
 
 #logos {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineProps, ref } from 'vue';
+import { computed, defineProps } from 'vue';
 import '../style.css';
 
 import type { Tradeup } from '../../tradeuptracker/types.ts';
@@ -12,7 +12,7 @@ const props = defineProps<{
 }>();
 
 const nameColor = computed(() =>
-    props.tradeup.inputs[0].stattrak ? stattrakColor : "initial"
+    props.tradeup.inputs[0].stattrak ? stattrakColor : "var(--text-color-main)"
 );
 
 const gradient = computed(() =>

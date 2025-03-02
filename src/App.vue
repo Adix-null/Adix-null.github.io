@@ -10,7 +10,7 @@ import CheckBoxes from './components/Checkboxes.vue';
 import TradeupTableLabels from './components/TradeupTableLabels.vue';
 import PageNumber from './components/PageNumber.vue';
 
-import { type Tradeup, type Range, type Prices, rarityDictionary, raritiesOrder, collectionNames, priceTypeNames } from '../tradeuptracker/types.ts';
+import { type Tradeup, rarityDictionary, raritiesOrder, collectionNames, priceTypeNames } from '../tradeuptracker/types.ts';
 
 const tradeups = ref<Tradeup[]>([]);
 const tradeupsQueried = ref<Tradeup[]>([]);
@@ -246,7 +246,7 @@ const onSubmitQuery = () => {
       <div class="category">
         <label>Collection</label>
         <Dropdown v-on:['collectionChosen']="onChosenCollection" message="collectionChosen"
-          :options="(['Any', ...collectionNames.sort()])" :default="0" v-model:selected="collectionChosen" />
+          :options="(['Any', ...collectionNames.sort()])" :default="0" :v-model="collectionChosen" />
       </div>
 
       <div id="search_rarities" class="category">
@@ -258,8 +258,8 @@ const onSubmitQuery = () => {
       <br />
       <div id="search-price" class="category">
         <label>Price</label>
-        <!-- <Dropdown v-on:['onChosenPriceType']="onChosenPriceType" message="onChosenPriceType" :options="priceTypeNames"
-          :default="0" v-model:selected="selectedPriceOption" /> -->
+        <Dropdown v-on:['onChosenPriceType']="onChosenPriceType" message="onChosenPriceType" :options="priceTypeNames"
+          :default="0" :v-model:selected="selectedPriceOption" class="hide" />
         <SliderRange :min="0" :max="100" :step="0.01" v-model:min-value.number="priceSliderMin"
           v-model:max-value.number="priceSliderMax" />
       </div>
@@ -385,5 +385,9 @@ input[type=checkbox] {
 
 #footer {
   margin-top: auto;
+}
+
+.hide {
+  display: none !important;
 }
 </style>

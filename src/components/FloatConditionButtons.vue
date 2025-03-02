@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref, type Ref } from 'vue';
 import { rangeDictionaryShortNames, shorthandKeys } from '../../tradeuptracker/types.ts';
 
 const emit = defineEmits<{

@@ -11,8 +11,12 @@ import {
 	ranges,
 } from "./types.ts";
 
+const STEAMWEBAPI_KEY = "72ZDY58DKG0WJNJ4"; //Deno.env.get("STEAMWEBAPI_KEY");
+
 const priceUrl: URL = new URL(
-	"https://www.steamwebapi.com/steam/api/items?key=72ZDY58DKG0WJNJ4&sort_by=name&item_group=rifle,sniper+rifle,machinegun,pistol,smg,shotgun,equipment"
+	"https://www.steamwebapi.com/steam/api/items?key=" +
+		STEAMWEBAPI_KEY +
+		"&sort_by=name&item_group=rifle,sniper+rifle,machinegun,pistol,smg,shotgun,equipment"
 );
 const pricePath: URL = new URL("./items.json", import.meta.url);
 const infoUrl: URL = new URL("https://bymykel.github.io/CSGO-API/api/en/skins.json");
@@ -535,7 +539,7 @@ function calculateExpectedValue(tradeups: Tradeup[]) {
 		});
 
 		return {
-			max_required_float: tradeup.max_required_float,
+			max_required_float: Math.min(tradeup.max_required_float, tradeup.inputs[0].max_float),
 			collection: tradeup.collection,
 			rarity: tradeup.rarity,
 			availability: tradeup.availability,
