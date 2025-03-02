@@ -10,6 +10,9 @@ jobs:
  build-and-deploy:
   runs-on: ubuntu-latest
 
+  env:
+   STEAMWEBAPI_KEY: ${{vars.STEAMWEBAPI_KEY }}
+
   steps:
    - name: Checkout repository
      uses: actions/checkout@v4
@@ -18,6 +21,9 @@ jobs:
      uses: actions/setup-node@v4
      with:
       node-version: 22
+
+   - name: Set up environment variables
+     run: echo "VITE_SECRET_KEY=${{ vars.STEAMWEBAPI_KEY }}" >> $STEAMWEBAPI_KEY
 
    - name: Install dependencies and build
      run: |
