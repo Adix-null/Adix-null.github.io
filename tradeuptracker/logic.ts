@@ -12,7 +12,13 @@ import {
 	ranges,
 } from "./types.ts";
 
-const STEAMWEBAPI_KEY = "72ZDY58DKG0WJNJ4"; //Deno.env.get("STEAMWEBAPI_KEY");
+const STEAMWEBAPI_KEY = Deno.args[0];
+let fetch_web: boolean = true;
+
+if (!STEAMWEBAPI_KEY) {
+	fetch_web = false;
+	console.error("Error: Missing Steam web API Key");
+}
 
 const priceUrl: URL = new URL(
 	"https://www.steamwebapi.com/steam/api/items?key=" +
@@ -29,7 +35,6 @@ const epsilon: number = 0.000001;
 const fee: number = 13;
 
 const price_type: string = priceTypeNames[0];
-const fetch_web: boolean = false;
 
 processItems();
 
