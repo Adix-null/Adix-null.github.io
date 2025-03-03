@@ -19,5 +19,5 @@ jobs:
      with:
       deno-version: v2.x
 
-   - name: Run TypeScript script
-     run: deno run --allow-net --allow-read --allow-write --allow-env tradeuptracker/logic.ts ${{ vars.STEAMWEBAPI_KEY }}
+   - name: Run tradeup script
+     run: deno run --allow-net --allow-read --allow-write --allow-env tradeuptracker/logic.ts ${{ vars.STEAMWEBAPI_KEY }} true

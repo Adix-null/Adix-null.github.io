@@ -19,6 +19,9 @@ jobs:
      with:
       node-version: 22
 
+   - name: Run script for timestamp
+     run: deno run --allow-net --allow-read --allow-write --allow-env tradeuptracker/logic.ts ${{ vars.STEAMWEBAPI_KEY }} false
+
    - name: Install dependencies and build
      run: |
       npm ci

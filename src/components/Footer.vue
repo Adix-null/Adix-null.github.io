@@ -5,6 +5,7 @@ import vite_logo from '../assets/Vitejs-logo.png';
 import vue_logo from '../assets/vue.svg';
 import deno_logo from '../assets/Deno-logo.png';
 import api_logo from '../assets/steamwebapi-logo.svg';
+import { lastUpdated } from "../../tradeuptracker/lastUpdated.ts";
 </script>
 
 <template>
@@ -14,13 +15,16 @@ import api_logo from '../assets/steamwebapi-logo.svg';
                 Developed by <a href="https://github.com/Adix-null">Adix Null</a>
             </p>
             <p>
-                All containers, items and their corresponding visual media shown on this site are the property of Valve
+                Prices update every 8 hours. All containers, items and their corresponding visual media shown on this
+                site are the property of Valve
                 Corporation. TradeupTracker does not guarantee the accuracy of prices shown on screen, as they are
                 subject to volatile market fluctuations and may not be truthfully reflected in the data sources.
                 <br />
                 ©2025 TradeUptracker
                 <br />
-                Last update: 2025-03-03 01:15:45
+            </p>
+            <p>
+                Last updated: {{ lastUpdated.replace("T", " ").replace("Z", " UTC") }}
             </p>
         </div>
         <div id="logos">

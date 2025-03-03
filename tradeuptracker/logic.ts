@@ -13,11 +13,11 @@ import {
 } from "./types.ts";
 
 const STEAMWEBAPI_KEY = Deno.args[0];
-let fetch_web: boolean = true;
+let fetch_web: boolean = Deno.args[1] == "true";
 
 if (!STEAMWEBAPI_KEY) {
 	fetch_web = false;
-	console.error("Error: Missing Steam web API Key");
+	console.error("Missing Steam web API Key");
 }
 
 const priceUrl: URL = new URL(
@@ -29,7 +29,7 @@ const pricePath: URL = new URL("./items.json", import.meta.url);
 const infoUrl: URL = new URL("https://bymykel.github.io/CSGO-API/api/en/skins.json");
 const infoPath: URL = new URL("./skins.json", import.meta.url);
 const tradeupPath: URL = new URL("../public/tradeups.json", import.meta.url);
-const tradeupPathTest: URL = new URL("../public/tradeuptest.json", import.meta.url);
+//const tradeupPathTest: URL = new URL("../public/tradeuptest.json", import.meta.url);
 
 const epsilon: number = 0.000001;
 const fee: number = 13;
@@ -83,9 +83,13 @@ async function processItems() {
 		console.log("Expected value");
 
 		await Deno.writeTextFile(tradeupPath, JSON.stringify(tradeupList));
-		console.log("File written successfully!");
+		//await Deno.writeTextFile(tradeupPathTest, JSON.stringify(tradeupList.slice(0, 300)));
+		console.log("Data written successfully");
 
-		await Deno.writeTextFile(tradeupPathTest, JSON.stringify(tradeupList.slice(0, 300)));
+		const timestamp = new Date().toISOString();
+		const content = `export const lastUpdated = "${timestamp}";\n`;
+		await Deno.writeTextFile("tradeuptracker/lastUpdated.ts", content);
+		console.log("Updated timestamp:", timestamp);
 
 		console.log((Date.now() - start) / 1000 + "s");
 	} catch (error) {
