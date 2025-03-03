@@ -13,7 +13,7 @@ import {
 } from "./types.ts";
 
 const STEAMWEBAPI_KEY = Deno.args[0];
-let fetch_web: boolean = Deno.args[1] == "true";
+let fetch_web: boolean = true;
 
 if (!STEAMWEBAPI_KEY) {
 	fetch_web = false;

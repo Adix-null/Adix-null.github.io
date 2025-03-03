@@ -14,13 +14,13 @@ jobs:
    - name: Checkout repository
      uses: actions/checkout@v4
 
-   - name: Set up Node.js
-     uses: actions/setup-node@v4
+   - name: Set up Deno
+     uses: denoland/setup-deno@v2
      with:
-      node-version: 22
+      deno-version: v2.x
 
    - name: Run script for timestamp
-     run: deno run --allow-net --allow-read --allow-write --allow-env tradeuptracker/logic.ts ${{ vars.STEAMWEBAPI_KEY }} false
+     run: deno run --allow-net --allow-read --allow-write --allow-env tradeuptracker/logic.ts
 
    - name: Install dependencies and build
      run: |
