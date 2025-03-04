@@ -218,6 +218,10 @@ const onSubmitQuery = () => {
 <template>
   <Navbar id="navbar" />
 
+  <div id="desktop-infobox">
+    This site is best viewed on a desktop.
+  </div>
+
   <div id="main">
     <div id="filter">
       <form class="category" id="update-buttons">
@@ -312,20 +316,64 @@ const onSubmitQuery = () => {
 <style scoped>
 #main {
   display: flex;
-  flex-direction: row;
-  width: 80%;
-  padding: 1em 0em 3em 0em
+}
+
+#desktop-infobox {
+  margin: 1em;
+  padding: 0.5em 1em;
+  border-radius: 10px;
+  border: 5px solid var(--accent-highlight);
+  background-color: var(--accent-main);
+}
+
+@media only screen and (max-width: 1000px) {
+  #main {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  #filter {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  #item-view {
+    min-width: none;
+    overflow: clip;
+    padding-left: 0em;
+  }
+}
+
+@media only screen and (min-width: 1000px) {
+  #desktop-infobox {
+    visibility: hidden;
+  }
+
+  #main {
+    flex-direction: row;
+    width: 80%;
+    padding-bottom: 3em;
+  }
+
+  #filter {
+    min-width: 200px;
+    border-right: 2px solid var(--text-color-main);
+  }
+
+  #item-view {
+    width: 100%;
+    min-width: 750px;
+    padding-left: 1em;
+  }
 }
 
 #filter {
-  min-width: 200px;
   height: 100%;
   padding: 0em 1em;
   display: flex;
   flex-direction: column;
   align-items: start;
   text-align: left;
-  border-right: 2px solid var(--text-color-main);
 }
 
 .category {
@@ -360,12 +408,9 @@ input[type=checkbox] {
 }
 
 #item-view {
-  width: 100%;
-  min-width: 750px;
   flex-grow: 0;
   display: block;
   grid-auto-rows: min-content;
-  padding-left: 1em;
 }
 
 

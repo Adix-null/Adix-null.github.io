@@ -105,8 +105,8 @@ const onInput = (event: Event) => {
                 @input="onInput" v-model="sliderMaxValue" />
         </div>
         <div class="minmax-inputs">
-            <input type="number" :step="step" v-model="sliderMinValue" />
-            <input type="number" :step="step" v-model="sliderMaxValue" />
+            <input type="tel" pattern="-?[0-9]+" :step="step" v-model="sliderMinValue" />
+            <input type="tel" pattern="-?[0-9]+" :step="step" v-model="sliderMaxValue" />
         </div>
     </div>
 </template>

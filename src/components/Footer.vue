@@ -9,7 +9,7 @@ import { lastUpdated } from "../../tradeuptracker/lastUpdated.ts";
 </script>
 
 <template>
-    <div class="container">
+    <div id="container">
         <div id="texts">
             <p>
                 Developed by <a href="https://github.com/Adix-null">Adix Null</a>
@@ -39,7 +39,7 @@ import { lastUpdated } from "../../tradeuptracker/lastUpdated.ts";
 </template>
 
 <style scoped>
-.container {
+#container {
     padding: 2em 2em;
     display: flex;
     flex-direction: row;
@@ -47,6 +47,13 @@ import { lastUpdated } from "../../tradeuptracker/lastUpdated.ts";
     box-sizing: border-box;
     max-height: 500px;
     background-color: var(--backround-color-accent);
+}
+
+@media only screen and (max-width: 1000px) {
+    #container {
+        flex-direction: column;
+        max-height: 1000px;
+    }
 }
 
 #logos {
