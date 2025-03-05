@@ -35,6 +35,16 @@ const onChosenCurrency = (option: string) => {
 </template>
 
 <style scoped>
+.container {
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    background-color: var(--backround-color-accent);
+}
+
 img {
     width: 65px;
     border-radius: 10px;
@@ -49,11 +59,13 @@ h2 {
 
 #currency {
     visibility: hidden;
+    overflow: hidden;
     margin: 0px 20px
 }
 
 #links-container {
     visibility: hidden;
+    overflow: hidden;
     display: flex;
     flex-direction: row;
     margin-left: auto;
@@ -70,15 +82,5 @@ h2 {
     border: 2px solid white;
     text-wrap: nowrap;
     cursor: pointer;
-}
-
-.container {
-    width: 100%;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-    background-color: var(--backround-color-accent);
 }
 </style>
