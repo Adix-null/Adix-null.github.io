@@ -217,7 +217,6 @@ const onSubmitQuery = () => {
 
 <template>
   <Navbar id="navbar" />
-  <!--
 
   <div id="desktop-infobox">
     This site is best viewed on a desktop.
@@ -309,7 +308,7 @@ const onSubmitQuery = () => {
         :set-value="currentPage" />
     </div>
   </div>
--->
+
   <Footer_info id="footer" />
 
 </template>
