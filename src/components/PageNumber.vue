@@ -26,7 +26,7 @@ watch(() => props.setValue, (newValue) => {
 </script>
 
 <template>
-    <div id="container">
+    <div class="container">
         <button v-if="pageCount > 0" @click="changePageNum(1)"
             :class="'page-number' + (currentPageNum === 1 ? ' highlight' : '')">1</button>
         <p v-if="currentPageNum > 3" class="page-number">...</p>
@@ -45,7 +45,7 @@ watch(() => props.setValue, (newValue) => {
 </template>
 
 <style scoped>
-#container {
+.container {
     display: flex;
     flex-direction: row;
     justify-content: center;

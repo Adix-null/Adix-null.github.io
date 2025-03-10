@@ -33,7 +33,7 @@ const chooseOption = () => {
 </script>
 
 <template>
-    <div>
+    <div class="container">
         <div v-if="props.special">
             <input type="checkbox" :id="props.special" checked @change="chooseOption"
                 :ref="(el => checkboxes[0] = el as HTMLInputElement)">
@@ -48,7 +48,7 @@ const chooseOption = () => {
 </template>
 
 <style scoped>
-#container {
+.container {
     display: flex;
     flex-direction: column;
 }

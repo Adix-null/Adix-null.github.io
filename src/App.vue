@@ -332,15 +332,11 @@ const onSubmitQuery = () => {
     width: 100%;
   }
 
-  #filter {
-    width: 100%;
-    box-sizing: border-box;
-  }
-
   #item-view {
-    min-width: none;
-    overflow: clip;
-    padding-left: 0em;
+    min-width: 600px;
+    overflow: hidden;
+    padding: 1em;
+    box-sizing: border-box;
   }
 }
 
@@ -357,18 +353,17 @@ const onSubmitQuery = () => {
 
   #filter {
     min-width: 200px;
+    height: 100%;
     border-right: 2px solid var(--text-color-main);
   }
 
   #item-view {
     width: 100%;
-    /*min-width: 750px;*/
     padding-left: 1em;
   }
 }
 
 #filter {
-  height: 100%;
   padding: 0em 1em;
   display: flex;
   flex-direction: column;

@@ -13,13 +13,13 @@ const setFloatBounds = (quality: string) => {
 </script>
 
 <template>
-    <div id="container">
+    <div class="container">
         <button v-for="float in shorthandKeys" @click=setFloatBounds(float)>{{ float }}</button>
     </div>
 </template>
 
 <style scoped>
-#container {
+.container {
     margin-top: 0.5em;
     display: flex;
     flex-direction: row;
@@ -27,12 +27,12 @@ const setFloatBounds = (quality: string) => {
     text-align: center;
 }
 
-#container>button {
+.container>button {
     width: 100%;
     border: 1px solid var(--text-color-main);
 }
 
-#container>button:hover {
+.container>button:hover {
     background-color: var(--background-color-hover);
 }
 </style>

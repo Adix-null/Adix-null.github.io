@@ -32,7 +32,7 @@ const toggleField = (index: number) => {
 </script>
 
 <template>
-    <div id="container">
+    <div class="container">
         <div v-for="(field, index) in props.labels" :key="index" class="field">
             <p @click="toggleField(index)">{{ field }}</p>
             <button @click=" toggleField(index)">
@@ -43,7 +43,7 @@ const toggleField = (index: number) => {
 </template>
 
 <style scoped>
-#container {
+.container {
     display: grid;
     border-bottom: 2px solid white;
     font-size: 0.85em;
