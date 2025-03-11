@@ -265,6 +265,18 @@ export const raritiesOrder: string[] = [
 	"Covert",
 ];
 
+export const tableLabels: string[] = [
+	"Rarity",
+	"Item Name",
+	"Outcomes",
+	"Price",
+	"Profit",
+	"Profit Chance",
+	"Float",
+	"Availability",
+	"24h Volume",
+];
+
 export const rarityDictionary: Record<string, number> = Object.fromEntries(
 	raritiesOrder.map((rarity: string, index: number) => [rarity, index])
 );

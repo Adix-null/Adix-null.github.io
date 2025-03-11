@@ -10,7 +10,7 @@ import CheckBoxes from './components/Checkboxes.vue';
 import TradeupTableLabels from './components/TradeupTableLabels.vue';
 import PageNumber from './components/PageNumber.vue';
 
-import { type Tradeup, rarityDictionary, raritiesOrder, collectionNames, priceTypeNames } from '../tradeuptracker/types.ts';
+import { type Tradeup, rarityDictionary, raritiesOrder, collectionNames, priceTypeNames, tableLabels } from '../tradeuptracker/types.ts';
 
 const tradeups = ref<Tradeup[]>([]);
 const tradeupsQueried = ref<Tradeup[]>([]);
@@ -42,7 +42,7 @@ const liquiditySliderMin = ref(0);
 const liquiditySliderMax = ref(100);
 
 const itemsPerPage = 30;
-const tableLabels: string[] = ['Rarity', 'Item Name', 'Outcomes', 'Price', 'Profit', 'Profit Chance', 'Float', 'Availability', '24h Volume'];
+const tableLabelInfo: string[] = tableLabels;
 
 onMounted(async () => {
   try {
@@ -296,7 +296,7 @@ const onSubmitQuery = () => {
 
     <div id="item-view">
       <div id="item-table-labels">
-        <TradeupTableLabels :labels="tableLabels" @toggle="onSort" />
+        <TradeupTableLabels :labels="tableLabelInfo" @toggle="onSort" />
       </div>
 
       <div id="item-list">
@@ -324,43 +324,6 @@ const onSubmitQuery = () => {
   border-radius: 10px;
   border: 5px solid var(--accent-highlight);
   background-color: var(--accent-main);
-}
-
-@media only screen and (max-width: 1000px) {
-  #main {
-    flex-direction: column;
-    width: 100%;
-  }
-
-  #item-view {
-    min-width: 600px;
-    overflow: hidden;
-    padding: 1em;
-    box-sizing: border-box;
-  }
-}
-
-@media only screen and (min-width: 1000px) {
-  #desktop-infobox {
-    visibility: hidden;
-  }
-
-  #main {
-    flex-direction: row;
-    width: 80%;
-    padding-bottom: 3em;
-  }
-
-  #filter {
-    min-width: 200px;
-    height: 100%;
-    border-right: 2px solid var(--text-color-main);
-  }
-
-  #item-view {
-    width: 100%;
-    padding-left: 1em;
-  }
 }
 
 #filter {
@@ -408,12 +371,6 @@ input[type=checkbox] {
   grid-auto-rows: min-content;
 }
 
-
-#item-table-labels>*,
-#item-list {
-  grid-template-columns: 1fr 3fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-}
-
 #item-list {
   display: grid;
   grid-template-rows: auto 1fr;
@@ -425,6 +382,64 @@ input[type=checkbox] {
 
 #footer {
   margin-top: auto;
+}
+
+@media only screen and (max-width: 1000px),
+only screen and (min-width: 700px) {
+  #main {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  #item-table-labels>*,
+  #item-list {
+    grid-template-columns: 1fr 3fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  }
+
+  #item-view {
+    min-width: 700px;
+    padding: 1em;
+    box-sizing: border-box;
+  }
+}
+
+@media only screen and (max-width: 700px) {
+  #item-view {
+    display: grid;
+    min-width: 100%;
+    overflow-x: auto;
+  }
+
+  #item-table-labels {
+    display: grid;
+  }
+
+  #item-list {
+    width: 1000px;
+  }
+}
+
+@media only screen and (min-width: 1000px) {
+  #desktop-infobox {
+    visibility: hidden;
+  }
+
+  #main {
+    flex-direction: row;
+    width: 80%;
+    padding-bottom: 3em;
+  }
+
+  #filter {
+    min-width: 200px;
+    height: 100%;
+    border-right: 2px solid var(--text-color-main);
+  }
+
+  #item-view {
+    width: 100%;
+    padding-left: 1em;
+  }
 }
 
 .hide {

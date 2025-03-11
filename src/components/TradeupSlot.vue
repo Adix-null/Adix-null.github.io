@@ -84,7 +84,7 @@ a,
 p {
     height: 100%;
     margin: 0;
-    padding: 0;
+    padding: 0 0.25em 0 0;
 }
 
 #pic {
