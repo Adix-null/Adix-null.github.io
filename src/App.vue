@@ -421,7 +421,7 @@ only screen and (min-width: 700px) {
 
 @media only screen and (min-width: 1000px) {
   #desktop-infobox {
-    visibility: hidden;
+    display: none;
   }
 
   #main {
