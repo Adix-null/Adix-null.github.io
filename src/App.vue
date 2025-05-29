@@ -327,7 +327,7 @@ const onSubmitQuery = () => {
 }
 
 #filter {
-  padding: 0em 1em;
+  padding: 0em 1.5em;
   display: flex;
   flex-direction: column;
   align-items: start;

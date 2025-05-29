@@ -29,7 +29,6 @@ const pricePath: URL = new URL("./items.json", import.meta.url);
 const infoUrl: URL = new URL("https://bymykel.github.io/CSGO-API/api/en/skins.json");
 const infoPath: URL = new URL("./skins.json", import.meta.url);
 const tradeupPath: URL = new URL("../public/tradeups.json", import.meta.url);
-//const tradeupPathTest: URL = new URL("../public/tradeuptest.json", import.meta.url);
 
 const epsilon: number = 0.000001;
 const fee: number = 13;
