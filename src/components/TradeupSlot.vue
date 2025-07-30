@@ -72,7 +72,6 @@ function toFixedTruncate(num: number, decimals: number): string {
     background-color: var(--background-color-alt);
 }
 
-
 .container * {
     overflow: clip;
     max-height: 75px;
