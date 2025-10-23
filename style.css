@@ -26,6 +26,9 @@
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 }
+html {
+	scroll-behavior: smooth;
+}
 
 body {
 	margin: 0px;
@@ -79,6 +82,7 @@ nav {
 	cursor: pointer;
 	transition: background-color 0.2s;
 	background-color: var(--background-color-accent);
+	text-decoration: none;
 }
 
 .nav-button:hover {
@@ -106,4 +110,14 @@ nav {
 	flex-direction: column;
 	justify-self: center;
 	margin-top: 20px;
+}
+
+#footer {
+	margin-top: 1500px;
+	padding: 10px 0 10px 0;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	background-color: var(--background-color-alt);
 }
