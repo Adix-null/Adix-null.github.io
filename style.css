@@ -10,7 +10,7 @@
 	--accent-bright: hsl(210, 100%, 45%);
 
 	--university: hsl(220, 91%, 42%);
-	--personal: hsl(55, 91%, 40%);
+	--personal: hsl(55, 78%, 48%);
 	--work: hsl(142, 91%, 40%);
 
 	font-family: Barlow, sans-serif;
@@ -25,11 +25,6 @@
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
-}
-
-hr {
-	margin: 0;
-	border-color: var(--accent-highlight);
 }
 
 body {
@@ -111,64 +106,4 @@ nav {
 	flex-direction: column;
 	justify-self: center;
 	margin-top: 20px;
-}
-
-.image-container {
-	position: relative;
-	width: 100%;
-	height: 250px;
-}
-
-.image-container > img {
-	width: 100%;
-	height: 100%;
-	display: block;
-	border-radius: 25px;
-	object-fit: cover;
-}
-
-.gradient {
-	width: 100%;
-	height: 100%;
-	border-radius: 25px;
-	background-image: linear-gradient(to bottom, black, transparent 100%);
-	position: absolute;
-}
-
-.top-left-text {
-	position: absolute;
-	top: 5px;
-	left: 15px;
-	color: white;
-	font-size: 2em;
-	padding: 4px 8px;
-	font-weight: 500;
-}
-
-.top-right-text {
-	position: absolute;
-	top: 10px;
-	right: 10px;
-	color: white;
-	font-size: 1.5em;
-	padding: 4px 8px;
-	border-radius: 4px;
-}
-
-.uni {
-	color: var(--university);
-}
-
-.personal {
-	color: var(--personal);
-}
-
-.work {
-	color: var(--work);
-}
-
-.info {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
 }
