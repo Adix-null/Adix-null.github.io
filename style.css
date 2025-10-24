@@ -86,9 +86,8 @@ nav {
 }
 
 .nav-button:hover {
-	background: linear-gradient(to top, var(--accent-main), transparent 60%);
+	background: linear-gradient(to top, var(--accent-main), transparent 50%);
 	background-size: 200% 200%;
-
 	animation: ButtonAnimation 0.3s ease forwards;
 }
 
@@ -96,7 +95,6 @@ nav {
 	0% {
 		background-position: 100% 0%;
 	}
-
 	100% {
 		background-position: 10% 70%;
 	}
@@ -106,14 +104,19 @@ nav {
 
 #main {
 	display: flex;
-	width: 30%;
+	width: 35%;
 	flex-direction: column;
 	justify-self: center;
 	margin-top: 20px;
 }
 
+#intro,
+#ps {
+	font-size: 1.25rem;
+}
+
 #footer {
-	margin-top: 1500px;
+	margin-top: 250px;
 	padding: 10px 0 10px 0;
 	width: 100%;
 	display: flex;
