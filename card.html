@@ -1,0 +1,102 @@
+<div class="image-container">
+	<div class="gradient"></div>
+	<img />
+	<div class="top-left-text"></div>
+	<div class="top-right-text"></div>
+	<div class="right-info"></div>
+</div>
+<div class="info">
+	<span class="left-info">Start: </span>
+</div>
+<p class="techstack">Tech used:</p>
+<p class="project-description"></p>
+<a target="_blank">Project link</a>
+<hr />
+
+<style>
+	.image-container {
+		position: relative;
+		width: 100%;
+		height: 250px;
+		margin-top: 20px;
+	}
+
+	.image-container > img {
+		width: 100%;
+		height: 100%;
+		display: block;
+		border-radius: 25px;
+		object-fit: cover;
+	}
+
+	.gradient {
+		width: 100%;
+		height: 100%;
+		border-radius: 25px;
+		background-image: linear-gradient(to bottom, black, transparent 100%);
+		position: absolute;
+	}
+
+	.top-left-text {
+		position: absolute;
+		top: 5px;
+		left: 15px;
+		color: white;
+		font-size: 2em;
+		padding: 4px 8px;
+		font-weight: 500;
+	}
+
+	.top-right-text {
+		position: absolute;
+		top: 10px;
+		right: 10px;
+		font-size: 1.5em;
+		padding: 4px 8px;
+		border-radius: 4px;
+	}
+
+	.university {
+		color: var(--university);
+	}
+	.personal {
+		color: var(--personal);
+	}
+	.work {
+		color: var(--work);
+	}
+
+	.info {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	.techstack {
+		margin-top: 5px;
+	}
+
+	hr {
+		margin: 5px, 0, 0, 0;
+		border-color: var(--accent-highlight);
+	}
+
+	.right-info {
+		position: absolute;
+		bottom: 10px;
+		right: 10px;
+		padding: 4px 8px;
+		margin-right: 10px;
+		border-radius: 5px;
+	}
+
+	.ongoing {
+		background-color: var(--ongoing);
+	}
+	.finished {
+		background-color: var(--finished);
+	}
+	.unfinished {
+		background-color: var(--unfinished);
+	}
+</style>
