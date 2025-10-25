@@ -17,6 +17,7 @@ class ProjectCard extends HTMLElement {
         shadow.querySelector('.top-right-text').className += ' ' + config.subtitle.toLowerCase() || ' '
         shadow.querySelector('.left-info').textContent += config.start || ''
         shadow.querySelector('.right-info').textContent = config.status || ''
+        shadow.querySelector('.right-info').className += ' ' + config.status.toLowerCase() || ' '
         shadow.querySelector('.techstack').textContent += ' ' + config.techstack || ' '
         shadow.querySelector('.project-description').textContent = config.description || ''
         const link = shadow.querySelector('a')
