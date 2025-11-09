@@ -121,6 +121,7 @@ nav {
 }
 
 #footer {
+	box-sizing: border-box;
 	margin-top: 150px;
 	padding: 10px 0 10px 0;
 	width: 100%;
@@ -128,4 +129,11 @@ nav {
 	flex-direction: column;
 	align-items: center;
 	background-color: var(--background-color-alt);
+}
+
+@media (width < 600px) {
+	#main {
+		width: 90%;
+		min-width: 250px;
+	}
 }

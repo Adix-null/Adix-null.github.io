@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="viewport" content="width=device-width, maximum-scale=1" />
 		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
 		<title>Site of Adix Null</title>
 		<link
@@ -12,25 +12,26 @@
 		<link rel="stylesheet" href="style.css" />
 	</head>
 	<body>
-		<script src="proj.js"></script>
-		<nav>
-			<div class="nav-left">Adix Null</div>
-			<div class="nav-right">
-				<a class="nav-button" href="https://www.linkedin.com/in/adomas-bieli%C5%ABnas-b91179216/">Info</a>
-				<a class="nav-button" href="#footer">Contact</a>
-			</div>
-		</nav>
+		<div id="body-wrapper">
+			<script src="proj.js"></script>
+			<nav>
+				<div class="nav-left">Adix Null</div>
+				<div class="nav-right">
+					<a class="nav-button" href="https://www.linkedin.com/in/adomas-bieli%C5%ABnas-b91179216/">Info</a>
+					<a class="nav-button" href="#footer">Contact</a>
+				</div>
+			</nav>
 
-		<div id="main">
-			<p id="intro">
-				Hi, I'm Adam - a second year CompSci student, I go by Adix Null online. My main passion is creating digital things,
-				mostly software projects. My work requires a lot of problem solving, which I like because I enjoy tackling complex
-				challenges with a rational mindset. Since the usual info is on Linkedin, below is a list of projects I have worked
-				on throughout the years.
-			</p>
+			<div id="main">
+				<p id="intro">
+					Hi, I'm Adam - a second year CompSci student, I go by Adix Null online. My main passion is creating digital things,
+					mostly software projects. My work requires a lot of problem solving, which I like because I enjoy tackling complex
+					challenges with a rational mindset. Since the usual info is on LinkedIn, below is a list of projects I have worked
+					on throughout the years.
+				</p>
 
-			<project-card
-				config='{
+				<project-card
+					config='{
 					"title":"Trivia platform",
 					"subtitle":"University",
 					"image":"images/trivia.png",
@@ -40,11 +41,11 @@
 					"description":"This is a live trivia game platform, similar to Kahoot. Our team goal is to meet all the requirements of the course and make a working product.",
 					"link":"https://github.com/Edgaras0404/PSI-Trivia"
 					}'
-			>
-			</project-card>
+				>
+				</project-card>
 
-			<project-card
-				config='{
+				<project-card
+					config='{
 					"title":"Haskell parser",
 					"subtitle":"University",
 					"image":"images/haskell.png",
@@ -54,11 +55,11 @@
 					"description":"A haskell parser that currently takes an input string from a cli and converts it to my custom ADT.",
 					"link":"https://github.com/Adix-null/uni/tree/main/semester_3/fp_mirror"
 					}'
-			>
-			</project-card>
+				>
+				</project-card>
 
-			<project-card
-				config='{
+				<project-card
+					config='{
 					"title":"Plantitude",
 					"subtitle":"Work",
 					"image":"images/plantitude.png",
@@ -68,11 +69,11 @@
 					"description":"Government funded project to monitor plant growth with AI and adjust the lamp height to alter growth conditions accordingly.",
 					"link":"https://github.com/GlubEUW/plantitude-team"
 					}'
-			>
-			</project-card>
+				>
+				</project-card>
 
-			<project-card
-				config='{
+				<project-card
+					config='{
 					"title":"Kabal Bot",
 					"subtitle":"Work",
 					"image":"images/crypto.png",
@@ -82,11 +83,11 @@
 					"description":"An interactive bot that tracks the activity of selected crypto wallet. If multiple wallets buy the same coin within a time period, a telegram message gets sent. Coded this for an acquaintance.",
 					"link":"https://github.com/Adix-null/KabalBot"
 					}'
-			>
-			</project-card>
+				>
+				</project-card>
 
-			<project-card
-				config='{
+				<project-card
+					config='{
 					"title":"Board Trove",
 					"subtitle":"Personal",
 					"image":"images/chess.png",
@@ -96,11 +97,11 @@
 					"description":"A chess game sharing platform created to learn backend development. I wanted to do something with backend for summer 2025, although I did not get round to finishing every feature since it was starting to get repetetive. But I achieved my goal of getting the hang of .NET.",
 					"link":"https://github.com/Adix-null/BoardTrove"
 					}'
-			>
-			</project-card>
+				>
+				</project-card>
 
-			<project-card
-				config='{
+				<project-card
+					config='{
 					"title":"Towernator",
 					"subtitle":"University",
 					"image":"images/towernator.png",
@@ -110,11 +111,11 @@
 					"description":"A wave defense game made for Desktop in a team project. I combined my gained OOP skills with previous C++ ecosystem knowledge. We hoped to develop a finished game, but the UI person dissapeared from the project, and we did not have the motivation or any incentive to pick up the slack.",
 					"link":"https://github.com/Adix-null/Towernator"
 					}'
-			>
-			</project-card>
+				>
+				</project-card>
 
-			<project-card
-				config='{
+				<project-card
+					config='{
 					"title":"Tradeup Tracker",
 					"subtitle":"Personal",
 					"image":"images/tradeup.png",
@@ -124,11 +125,11 @@
 					"description":"CSGO skin specific live statistics site that indexes tradeups that have the same skin 10 times. Learn frontend dev with Vue for this project. Also planned to profit from the tradeups, but found out the margins are too thin.",
 					"link":"https://github.com/Adix-null/TradeupTracker"
 					}'
-			>
-			</project-card>
+				>
+				</project-card>
 
-			<project-card
-				config='{
+				<project-card
+					config='{
 					"title":"University coursework",
 					"subtitle":"University",
 					"image":"images/vu.png",
@@ -138,11 +139,11 @@
 					"description":"Everything from Vilnius University coursework from the first semester.",
 					"link":"https://github.com/Adix-null/uni"
 					}'
-			>
-			</project-card>
+				>
+				</project-card>
 
-			<project-card
-				config='{
+				<project-card
+					config='{
 					"title":"SimpleTime",
 					"subtitle":"Work",
 					"image":"images/simpletime.png",
@@ -152,11 +153,11 @@
 					"description":"An app that was supposed to be like TikTok but for podcasts, before it was scrapped.",
 					"link":"https://github.com/Adix-null/simpletime"
 					}'
-			>
-			</project-card>
+				>
+				</project-card>
 
-			<project-card
-				config='{
+				<project-card
+					config='{
 					"title":"3D Julia",
 					"subtitle":"Personal",
 					"image":"images/fractal.png",
@@ -166,11 +167,11 @@
 					"description":"A fractal raymarcher that can display fractals given any SDF. I was inspired to create one by Code Parade, and it also worked as a large project of our choosing for 11th grade. Used quite a bit of math and c++ library specifics. One of my favorite projects to work on.",
 					"link":"https://github.com/Adix-null/3D-Julia"
 					}'
-			>
-			</project-card>
+				>
+				</project-card>
 
-			<project-card
-				config='{
+				<project-card
+					config='{
 					"title":"VeryVilnius2",
 					"subtitle":"Work",
 					"image":"images/veryvilnius.png",
@@ -180,19 +181,20 @@
 					"description":"An informational website for the VeryVilnius Apartments brand. This was my first time using webdev for more serious things.",
 					"link":"https://github.com/Adix-null/VeryVilnius2"
 					}'
-			>
-			</project-card>
+				>
+				</project-card>
 
-			<p id="ps">
-				That's about it for the tech projects, at least for the ones I feel deserve mentioning. What else can I tell about
-				myself, I like chess, Counter Strike and 3d modeling.
-			</p>
+				<p id="ps">
+					That's about it for the tech projects, at least for the ones I feel deserve mentioning. What else can I tell about
+					myself, I like chess, Counter Strike and 3d modeling.
+				</p>
+			</div>
+			<footer id="footer">
+				<a href="https://github.com/Adix-null">GitHub </a>
+				<span>adomas@stalas.lt</span>
+				<a href="https://www.linkedin.com/in/adomas-bieli%C5%ABnas-b91179216/">LinkedIn</a>
+				<a href="https://discord.com/users/458977314005319680"> Discord</a>
+			</footer>
 		</div>
-		<footer id="footer">
-			<a href="https://github.com/Adix-null">GitHub </a>
-			<span>adomas@stalas.lt</span>
-			<a href="https://www.linkedin.com/in/adomas-bieli%C5%ABnas-b91179216/">LinkedIn</a>
-			<a href="https://discord.com/users/458977314005319680"> Discord</a>
-		</footer>
 	</body>
 </html>
