@@ -15,7 +15,7 @@
 
 	--ongoing: hsl(43, 56%, 55%);
 	--finished: hsl(118, 38%, 47%);
-	--unfinished: hsl(16, 25%, 26%);
+	--canceled: hsl(2, 100%, 22%);
 
 	font-family: Barlow, sans-serif;
 	font-weight: 400;
